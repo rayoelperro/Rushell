@@ -1,0 +1,2 @@
+clear
+write "hello !read(your name:)"

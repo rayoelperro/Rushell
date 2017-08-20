@@ -1,0 +1,2 @@
+def saludo "write @Hello world@"
+def espera "write one" "wait 200" "write two" 
