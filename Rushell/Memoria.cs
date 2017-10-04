@@ -114,10 +114,8 @@ namespace Rushell
                     StreamReader sr = new StreamReader(paths[imp]);
                     string st = "";
                     while ((st = sr.ReadLine()) != null)
-                    {
                         if (st.StartsWith("def "))
                             Program.ConsoleAnalizer(st);
-                    }
                 }
                 else
                 {
