@@ -103,6 +103,100 @@ namespace Rushell
                 }
             }
 
+            if (Memoria.dlln.Count > 0 && Memoria.dllv.Count > 0)
+            {
+                for (int ax = 0; ax < Memoria.dlln.Count; ax++)
+                {
+                    try
+                    {
+                        while (a_.Contains("!" + Memoria.dlln[ax].ToString()))
+                        {
+                            string ael = "";
+                            int o = a_.IndexOf("!" + Memoria.dlln[ax].ToString());
+                            bool ok = false;
+                            for (int la = o + Memoria.dlln[ax].ToString().Length + 1; la < a_.Length; la++)
+                            {
+                                if (ok)
+                                {
+                                    if (a_[la] == ')')
+                                    {
+                                        ok = false;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        ael += a_[la];
+                                    }
+                                }
+                                if (la == o + Memoria.dlln[ax].ToString().Length + 1 && a_[la] == '.')
+                                {
+                                    ok = true;
+                                }
+                            }
+                            string[] vi = ael.Split('(');
+                            string[] param = vi[1].Split(',');
+                            string[] args = new string[2 + param.Length];
+                            args[0] = Memoria.dlln[ax].ToString();
+                            args[1] = vi[0];
+                            for (int x = 2; x < args.Length; x++)
+                                args[x] = param[x - 2];
+                            a_ = a_.Replace("!" + Memoria.dlln[ax].ToString() + "." + ael + ")", Memoria.dll_m(args).ToString());
+                        }
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
+            }
+
+            if (Memoria.insn.Count > 0 && Memoria.insv.Count > 0 && Memoria.inso.Count > 0)
+            {
+                for (int ax = 0; ax < Memoria.insn.Count; ax++)
+                {
+                    try
+                    {
+                        while (a_.Contains("!" + Memoria.insn[ax].ToString()))
+                        {
+                            string ael = "";
+                            int o = a_.IndexOf("!" + Memoria.insn[ax].ToString());
+                            bool ok = false;
+                            for (int la = o + Memoria.insn[ax].ToString().Length + 1; la < a_.Length; la++)
+                            {
+                                if (ok)
+                                {
+                                    if (a_[la] == ')')
+                                    {
+                                        ok = false;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        ael += a_[la];
+                                    }
+                                }
+                                if (la == o + Memoria.insn[ax].ToString().Length + 1 && a_[la] == '.')
+                                {
+                                    ok = true;
+                                }
+                            }
+                            string[] vi = ael.Split('(');
+                            string[] param = vi[1].Split(',');
+                            string[] args = new string[2 + param.Length];
+                            args[0] = Memoria.insn[ax].ToString();
+                            args[1] = vi[0];
+                            for (int x = 2; x < args.Length; x++)
+                                args[x] = param[x - 2];
+                            a_ = a_.Replace("!" + Memoria.insn[ax].ToString() + "." + ael + ")", Memoria.ins_m(args).ToString());
+                        }
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
+            }
+
             while (a_.Contains("!read"))
             {
                 int fir = a_.IndexOf("!read");

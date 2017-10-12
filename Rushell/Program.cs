@@ -183,6 +183,8 @@ namespace Rushell
                             ConsoleAnalizer(line.Replace("@","\""));
                     else if (Memoria.dlln.Contains(args[0]))
                         Memoria.dll_m(args);
+                    else if (Memoria.insn.Contains(args[0]))
+                            Memoria.ins_m(args);
                     else
                         Comandos.error("Comando erroneo: " + args[0]);
                     break;

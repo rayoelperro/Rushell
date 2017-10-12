@@ -26,6 +26,7 @@ namespace Rushell
 
         public static ArrayList insn = new ArrayList();
         public static ArrayList insv = new ArrayList();
+        public static ArrayList inso = new ArrayList();
 
         public static string CScompilerpath = @"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe";
 
@@ -160,10 +161,12 @@ namespace Rushell
                 {
                     parame[x - 4] = args[x];
                 }
-                ConstructorInfo cinf = ((Type)dllv[dlln.IndexOf(args[1])]).GetConstructor(alls);
+                Type upper = (Type)dllv[dlln.IndexOf(args[1])];
+                ConstructorInfo cinf = upper.GetConstructor(alls);
                 object instance = cinf.Invoke(parame);
                 insn.Add(args[3]);
                 insv.Add(instance);
+                inso.Add(upper);
             }
             else
             {
@@ -183,12 +186,12 @@ namespace Rushell
 
         public static object ins_m(string[] args)
         {
-            Type imp = (Type)dllv[dlln.IndexOf(args[0])];
+            Type imp = (Type)inso[insn.IndexOf(args[0])];
             MethodInfo toinv = imp.GetMethod(args[1]);
             object[] param = new object[args.Length - 2];
             for (int x = 2; x < args.Length; x++)
                 param[x - 2] = args[x];
-            return toinv.Invoke(null, param);
+            return toinv.Invoke(insv[insn.IndexOf(args[0])], param);
         }
     }
 }
