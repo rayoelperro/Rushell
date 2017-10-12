@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Rushell
@@ -203,6 +204,15 @@ namespace Rushell
             string reader = toRe.ReadToEnd();
             toRe.Close();
             return reader;
+        }
+
+        public static void async(string[] args)
+        {
+            string[] then = new string[args.Length - 1];
+            for (int x = 1; x < args.Length; x++)
+                then[x - 1] = args[x];
+            Thread ambit = new Thread(() => Program.Clasificar(then));
+            ambit.Start();
         }
     }
 }

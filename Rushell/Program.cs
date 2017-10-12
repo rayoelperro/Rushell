@@ -7,7 +7,7 @@ namespace Rushell
 {
     class Program
     {
-        public static Version producto = new Version(1,4,2,42);
+        public static Version producto = new Version(1,5,5,78);
         public static void Main(string[] args)
         {
             Console.Title = "Rushell";
@@ -98,7 +98,7 @@ namespace Rushell
 
         public static void Clasificar(string[] args)
         {
-            switch (args[0])
+            if(args.Length > 0) switch (args[0])
             {
                 case "write":
                     Comandos.write(args);
@@ -166,12 +166,23 @@ namespace Rushell
                 case "import":
                     Memoria.Import(args);
                     break;
+                case "from":
+                    Memoria.from_i(args);
+                    break;
+                case "async":
+                    Comandos.async(args);
+                    break;
+                case "run":
+                    Comandos.loadscript(args[1]);
+                    break;
                 default:
                     if (Memoria.varn.Contains(args[0]))
                         Memoria.Set_V(args);
                     else if (Memoria.defn.Contains(args[0]))
                         foreach (string line in Memoria.Get_D(args[0]))
                             ConsoleAnalizer(line.Replace("@","\""));
+                    else if (Memoria.dlln.Contains(args[0]))
+                        Memoria.dll_m(args);
                     else
                         Comandos.error("Comando erroneo: " + args[0]);
                     break;

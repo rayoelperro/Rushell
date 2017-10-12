@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Rushell.exe" size="657432">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Rushell.exe" size="658456">
       <assemblyIdentity name="Rushell" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>OcxvsHBASrgI9uaYOIEIOnp6wETomw6IJPBEiGsBriE=</dsig:DigestValue>
+        <dsig:DigestValue>Os4G6Lz4DXDiFR9UZVRDt8TFjkf9BicjZGX8Ku5wyAQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,6 +20,12 @@ namespace Rushell
 
         public static ArrayList defn = new ArrayList();
         public static ArrayList defv = new ArrayList();
+
+        public static ArrayList dlln = new ArrayList();
+        public static ArrayList dllv = new ArrayList();
+
+        public static ArrayList insn = new ArrayList();
+        public static ArrayList insv = new ArrayList();
 
         public static string CScompilerpath = @"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe";
 
@@ -122,6 +129,66 @@ namespace Rushell
                     Comandos.error("El archivo: " + paths[imp] + " no existe");
                 }
             }
+        }
+
+        public static void from_i(string[] args)
+        {
+            if (args[2].Equals("load") && args.Length > 2)
+            {
+                Assembly ldr = Assembly.LoadFile(args[1]);
+                for (int x = 3; x < args.Length; x++)
+                {
+                    Type cla = ldr.GetType(args[x]);
+                    if (cla == null)
+                        Comandos.error("Ruta invalida");
+                    else
+                    {
+                        dlln.Add(args[x]);
+                        dllv.Add(cla);
+                    }
+                }
+            }
+            else if (args[2].Equals("instance") && args.Length > 2)
+            {
+                Type[] alls = new Type[args.Length - 4];
+                object[] parame = new object[args.Length - 4];
+                for (int x = 0; x < alls.Length; x++)
+                {
+                    alls[x] = typeof(string);
+                }
+                for (int x = 4; x < args.Length; x++)
+                {
+                    parame[x - 4] = args[x];
+                }
+                ConstructorInfo cinf = ((Type)dllv[dlln.IndexOf(args[1])]).GetConstructor(alls);
+                object instance = cinf.Invoke(parame);
+                insn.Add(args[3]);
+                insv.Add(instance);
+            }
+            else
+            {
+                Comandos.error("Uso incorrecto de 'from'");
+            }
+        }
+
+        public static object dll_m(string[] args)
+        {
+            Type imp = (Type)dllv[dlln.IndexOf(args[0])];
+            MethodInfo toinv = imp.GetMethod(args[1]);
+            object[] param = new object[args.Length - 2];
+            for (int x = 2; x < args.Length; x++)
+                param[x - 2] = args[x];
+            return toinv.Invoke(null, param);
+        }
+
+        public static object ins_m(string[] args)
+        {
+            Type imp = (Type)dllv[dlln.IndexOf(args[0])];
+            MethodInfo toinv = imp.GetMethod(args[1]);
+            object[] param = new object[args.Length - 2];
+            for (int x = 2; x < args.Length; x++)
+                param[x - 2] = args[x];
+            return toinv.Invoke(null, param);
         }
     }
 }
