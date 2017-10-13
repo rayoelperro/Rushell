@@ -149,24 +149,40 @@ namespace Rushell
                     }
                 }
             }
-            else if (args[2].Equals("instance") && args.Length > 2)
+            else if (args[2].Equals("instantiate") && args.Length > 2)
             {
-                Type[] alls = new Type[args.Length - 4];
-                object[] parame = new object[args.Length - 4];
-                for (int x = 0; x < alls.Length; x++)
+                if (args.Length == 4)
                 {
-                    alls[x] = typeof(string);
+                    Type upper = (Type)dllv[dlln.IndexOf(args[1])];
+                    ConstructorInfo cinf = upper.GetConstructor(Type.EmptyTypes);
+                    object instance = cinf.Invoke(new object[] { });
+                    insn.Add(args[3]);
+                    insv.Add(instance);
+                    inso.Add(upper);
                 }
-                for (int x = 4; x < args.Length; x++)
+                else if (args.Length > 4)
                 {
-                    parame[x - 4] = args[x];
+                    Type[] alls = new Type[args.Length - 4];
+                    object[] parame = new object[args.Length - 4];
+                    for (int x = 0; x < alls.Length; x++)
+                    {
+                        alls[x] = typeof(string);
+                    }
+                    for (int x = 4; x < args.Length; x++)
+                    {
+                        parame[x - 4] = args[x];
+                    }
+                    Type upper = (Type)dllv[dlln.IndexOf(args[1])];
+                    ConstructorInfo cinf = upper.GetConstructor(alls);
+                    object instance = cinf.Invoke(parame);
+                    insn.Add(args[3]);
+                    insv.Add(instance);
+                    inso.Add(upper);
                 }
-                Type upper = (Type)dllv[dlln.IndexOf(args[1])];
-                ConstructorInfo cinf = upper.GetConstructor(alls);
-                object instance = cinf.Invoke(parame);
-                insn.Add(args[3]);
-                insv.Add(instance);
-                inso.Add(upper);
+                else
+                {
+                    Comandos.error("Insuficientes argumentos");
+                }
             }
             else
             {
@@ -178,20 +194,44 @@ namespace Rushell
         {
             Type imp = (Type)dllv[dlln.IndexOf(args[0])];
             MethodInfo toinv = imp.GetMethod(args[1]);
-            object[] param = new object[args.Length - 2];
-            for (int x = 2; x < args.Length; x++)
-                param[x - 2] = args[x];
-            return toinv.Invoke(null, param);
+            if (args.Length == 2)
+            {
+                return toinv.Invoke(null, new object[] { });
+            }
+            else if (args.Length > 2)
+            {
+                object[] param = new object[args.Length - 2];
+                for (int x = 2; x < args.Length; x++)
+                    param[x - 2] = args[x];
+                return toinv.Invoke(null, param);
+            }
+            else
+            {
+                Comandos.error("Insuficientes argumentos");
+            }
+            return null;
         }
 
         public static object ins_m(string[] args)
         {
             Type imp = (Type)inso[insn.IndexOf(args[0])];
             MethodInfo toinv = imp.GetMethod(args[1]);
-            object[] param = new object[args.Length - 2];
-            for (int x = 2; x < args.Length; x++)
-                param[x - 2] = args[x];
-            return toinv.Invoke(insv[insn.IndexOf(args[0])], param);
+            if (args.Length == 2)
+            {
+                return toinv.Invoke(insv[insn.IndexOf(args[0])], new object[]{ });
+            }
+            else if (args.Length > 2)
+            {
+                object[] param = new object[args.Length - 2];
+                for (int x = 2; x < args.Length; x++)
+                    param[x - 2] = args[x];
+                return toinv.Invoke(insv[insn.IndexOf(args[0])], param);
+            }
+            else
+            {
+                Comandos.error("Insuficientes argumentos");
+            }
+            return null;
         }
     }
 }

@@ -1,2 +1,2 @@
-def saludo "write @Hello world@"
-def espera "write one" "wait 200" "write two" 
+def greet "write @Hello world@"
+def wait "write one" "wait 200" "write two" 

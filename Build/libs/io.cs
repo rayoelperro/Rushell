@@ -9,19 +9,18 @@ class file
 		this.path = path;
 	}
 	
-	public void rewrite(){
-		
+	public void rewrite(string co){
+		File.WriteAllText(path,co);
 	}
 	
-	public void write(){
-		
+	public void write(string co){
+		string pre = "";
+		if(File.Exists(path))
+			pre = File.ReadAllText(path);
+		File.WriteAllText(path,pre+co);
 	}
 	
-	public string readtext(){
-		
-	}
-	
-	public string readbytes(){
-		
+	public string read(){
+		return File.ReadAllText(path);
 	}
 }

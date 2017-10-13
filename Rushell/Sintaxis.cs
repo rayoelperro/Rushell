@@ -134,16 +134,26 @@ namespace Rushell
                                 }
                             }
                             string[] vi = ael.Split('(');
-                            string[] param = vi[1].Split(',');
-                            string[] args = new string[2 + param.Length];
-                            args[0] = Memoria.dlln[ax].ToString();
-                            args[1] = vi[0];
-                            for (int x = 2; x < args.Length; x++)
-                                args[x] = param[x - 2];
-                            a_ = a_.Replace("!" + Memoria.dlln[ax].ToString() + "." + ael + ")", Memoria.dll_m(args).ToString());
+                            if (vi[1] == "")
+                            {
+                                string[] args = new string[2];
+                                args[0] = Memoria.dlln[ax].ToString();
+                                args[1] = vi[0];
+                                a_ = a_.Replace("!" + Memoria.dlln[ax].ToString() + "." + ael + ")", Memoria.dll_m(args).ToString());
+                            }
+                            else
+                            {
+                                string[] param = vi[1].Split(',');
+                                string[] args = new string[2 + param.Length];
+                                args[0] = Memoria.dlln[ax].ToString();
+                                args[1] = vi[0];
+                                for (int x = 2; x < args.Length; x++)
+                                    args[x] = param[x - 2];
+                                a_ = a_.Replace("!" + Memoria.dlln[ax].ToString() + "." + ael + ")", Memoria.dll_m(args).ToString());
+                            }
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
 
                     }
@@ -181,16 +191,26 @@ namespace Rushell
                                 }
                             }
                             string[] vi = ael.Split('(');
-                            string[] param = vi[1].Split(',');
-                            string[] args = new string[2 + param.Length];
-                            args[0] = Memoria.insn[ax].ToString();
-                            args[1] = vi[0];
-                            for (int x = 2; x < args.Length; x++)
-                                args[x] = param[x - 2];
-                            a_ = a_.Replace("!" + Memoria.insn[ax].ToString() + "." + ael + ")", Memoria.ins_m(args).ToString());
+                            if (vi[1] == "")
+                            {
+                                string[] args = new string[2];
+                                args[0] = Memoria.insn[ax].ToString();
+                                args[1] = vi[0];
+                                a_ = a_.Replace("!" + Memoria.insn[ax].ToString() + "." + ael + ")", Memoria.ins_m(args).ToString());
+                            }
+                            else
+                            {
+                                string[] param = vi[1].Split(',');
+                                string[] args = new string[2 + param.Length];
+                                args[0] = Memoria.insn[ax].ToString();
+                                args[1] = vi[0];
+                                for (int x = 2; x < args.Length; x++)
+                                    args[x] = param[x - 2];
+                                a_ = a_.Replace("!" + Memoria.insn[ax].ToString() + "." + ael + ")", Memoria.ins_m(args).ToString());
+                            }
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
 
                     }
