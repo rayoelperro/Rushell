@@ -1,12 +1,9 @@
 ﻿using org.mariuszgromada.math.mxparser;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rushell
 {
@@ -136,6 +133,14 @@ namespace Rushell
         {
             if (args[2].Equals("load") && args.Length > 2)
             {
+                if (!File.Exists(args[1]))
+                    if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + args[1]))
+                    {
+                        Comandos.error("Directory no encontrado: " + args[1]);
+                        return;
+                    }
+                    else
+                        args[1] = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + args[1];
                 Assembly ldr = Assembly.LoadFile(args[1]);
                 for (int x = 3; x < args.Length; x++)
                 {

@@ -1,13 +1,9 @@
 ﻿using org.mariuszgromada.math.mxparser;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Rushell
 {
@@ -133,6 +129,8 @@ namespace Rushell
                     Console.WriteLine("");
                 else if (args[ar] == "\\e")
                     Console.Write(" ");
+                else
+                    Comandos.error("Salto inidentificado: " + args[ar]);
         }
 
         public static void CScompiler(string[] args)

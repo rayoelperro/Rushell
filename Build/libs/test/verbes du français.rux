@@ -1,0 +1,19 @@
+write DIRE
+sa \n
+write "je dis" "tu dis" "il dit" "nous disons" "vous dites" "ils disent"
+var scan "!read(:)"
+if "(!scan == present)" write Correcto else write Incorrecto
+sa \n
+write "je disais" "tu disais" "il disait" "nous disions" "vous disiez" "ils disaient"
+scan "!read(:)"
+if "(!scan == imparfait)" write Correcto else write Incorrecto
+sa \n
+write "je dirai" "tu diras" "il dira" "nous dirons" "vous direz" "ils diront"
+scan "!read(:)"
+if "(!scan == futur)" write Correcto else write Incorrecto
+sa \n
+write "dis" "disons" "dites"
+scan "!read(:)"
+if "(!scan == imperatif)" write Correcto else write Incorrecto
+write "!read"
+exit

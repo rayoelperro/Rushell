@@ -1,10 +1,6 @@
 ﻿using org.mariuszgromada.math.mxparser;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Rushell
 {
@@ -12,9 +8,11 @@ namespace Rushell
     {
         public static string Analizar(string a_)
         {
-            a_ = a_.Replace("!always", int.MaxValue.ToString());
-            a_ = a_.Replace("!never", int.MinValue.ToString());
-            a_ = a_.Replace("!repetivevalue", Environment.GetEnvironmentVariable("Repeat", EnvironmentVariableTarget.Process));
+            a_ = a_.Replace("!always()", int.MaxValue.ToString());
+            a_ = a_.Replace("!never()", int.MinValue.ToString());
+            a_ = a_.Replace("!repetivevalue()", Environment.GetEnvironmentVariable("Repeat", EnvironmentVariableTarget.Process));
+            a_ = a_.Replace("!here()", System.IO.Directory.GetCurrentDirectory());
+            a_ = a_.Replace("!there()", System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
 
             if (Memoria.varn.Count > 0 && Memoria.varv.Count > 0)
             {

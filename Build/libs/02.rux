@@ -1,2 +1,0 @@
-def greet "write @Hello world@"
-def wait "write one" "wait 200" "write two" 

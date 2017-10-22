@@ -23,4 +23,12 @@ class file
 	public string read(){
 		return File.ReadAllText(path);
 	}
+	
+	public void delete(){
+		File.Delete(path);
+	}
+	
+	public void create(){
+		File.Create(path);
+	}
 }
