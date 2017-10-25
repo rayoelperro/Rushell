@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rushell
 {
@@ -156,6 +151,13 @@ namespace Rushell
                 {
                     res = "false";
                 }
+            }
+            else if (expresion[expresion.Length - 1] == '?')
+            {
+                if (Memoria.varn.Contains(expresion.Substring(0, expresion.Length - 1)))
+                    res = "true";
+                else
+                    res = "false";
             }
             return res;
         }

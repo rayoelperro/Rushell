@@ -271,6 +271,32 @@ namespace Rushell
                 a_ = new Regex(Regex.Escape("!math(" + wrt + ")")).Replace(a_, new Expression(wrt).calculate().ToString(), 1);
             }
 
+            while (a_.Contains("!logic"))
+            {
+                int fir = a_.IndexOf("!logic");
+                string wrt = "";
+                bool ok = false;
+                for (int lon = fir + "!logic".Length; lon < a_.Length; lon++)
+                {
+                    if (a_[lon] == ')')
+                    {
+                        ok = false;
+                    }
+                    else
+                    {
+                        if (ok)
+                        {
+                            wrt += a_[lon];
+                        }
+                    }
+                    if (a_[lon] == '(')
+                    {
+                        ok = true;
+                    }
+                }
+                a_ = new Regex(Regex.Escape("!logic(" + wrt + ")")).Replace(a_, new logicabooleana("(" + wrt + ")").operar().ToString(), 1);
+            }
+
             while (a_.Contains("!call"))
             {
                 int fir = a_.IndexOf("!call");

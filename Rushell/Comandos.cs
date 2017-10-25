@@ -92,6 +92,14 @@ namespace Rushell
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        public static void logic(string[] args)
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            for (int ar = 1; ar < args.Length; ar++)
+                Console.WriteLine(new logicabooleana(args[ar]).operar().ToString());
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
         public static void if_else(string[] args)
         {
             if (new logicabooleana(args[1]).operar())

@@ -118,6 +118,9 @@ namespace Rushell
                     case "math":
                         Comandos.math(args);
                         break;
+                    case "logic":
+                        Comandos.logic(args);
+                        break;
                     case "if":
                         Comandos.if_else(args);
                         break;
