@@ -1,0 +1,4 @@
+var x 0
+var a 1
+var b 0
+repeat 10 inv "math @!a+!b@" "x !a" "a !b" "b @!math(!x+!b)@"

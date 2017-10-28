@@ -180,6 +180,10 @@ namespace Rushell
                     case "run":
                         Comandos.loadscript(args[1]);
                         break;
+                    case "end":
+                        Console.ReadKey();
+                        Environment.Exit(-1);
+                        break;
                     default:
                         if (Memoria.varn.Contains(args[0]))
                             Memoria.Set_V(args);
