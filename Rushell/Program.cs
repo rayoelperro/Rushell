@@ -27,6 +27,8 @@ namespace Rushell
                     Console.WriteLine("Rushell Version: " + producto + "\nFor: " + Environment.OSVersion);
                     Console.WriteLine("");
                     Console.BackgroundColor = ConsoleColor.Black;
+                    if(args.Length>0)
+                        arguments(args);
                     StreamReader str = new StreamReader(args[0]);
                     string linea = "";
                     while ((linea = str.ReadLine()) != null)
@@ -198,6 +200,12 @@ namespace Rushell
                             Comandos.error("Comando erroneo: " + args[0]);
                         break;
                 }
+        }
+
+        public static void arguments(string[] fullargs)
+        {
+            for (int ar = 1; ar < fullargs.Length; ar++)
+                Memoria.Add_V(new string[] { "var", "arg" + (ar-1), fullargs[ar] });
         }
     }
 }
