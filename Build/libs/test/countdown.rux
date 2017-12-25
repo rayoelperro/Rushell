@@ -1,0 +1,3 @@
+clear
+repeat 25 inv "write @!math(25-!repetivevalue())@" "wait 1000" "if @(!repetivevalue() == 24)@ # else clear"
+write "boom!!!!!!!!!!"

@@ -16,6 +16,7 @@ namespace Rushell
         public static ArrayList funv = new ArrayList();
 
         public static ArrayList defn = new ArrayList();
+        public static ArrayList defp = new ArrayList();
         public static ArrayList defv = new ArrayList();
 
         public static ArrayList dlln = new ArrayList();
@@ -78,6 +79,12 @@ namespace Rushell
             }
         }
 
+        public static void End_V(string name)
+        {
+            varv.RemoveAt(varn.LastIndexOf(name));
+            varn.RemoveAt(varn.LastIndexOf(name));
+        }
+
         public static void Add_F(string[] args)
         {
             string px = "";
@@ -102,12 +109,32 @@ namespace Rushell
             ArrayList arr = new ArrayList(args);
             arr.RemoveAt(0);
             arr.RemoveAt(0);
+            if (((string)arr[0])[0] == '$')
+            {
+                defp.Add(((string)arr[0]).Substring(1).Split(new string[] { "," }, StringSplitOptions.None));
+                arr.RemoveAt(0);
+            }
+            else
+            {
+                defp.Add(new string[] { });
+            }
             defv.Add((string[])arr.ToArray(typeof(string)));
         }
 
         public static string[] Get_D(string name)
         {
             return (string[])defv[defn.IndexOf(name)];
+        }
+
+        public static void Call_D(string[] args)
+        {
+            string[] param = ((string[])defp[defn.IndexOf(args[0])]);
+            for (int id = 0; id < param.Length; id++)
+                Add_V(new string[] {"var", param[id], args[id+1]});
+            foreach (string line in Get_D(args[0]))
+                Program.ConsoleAnalizer(line.Replace("@", "\""));
+            for (int id = 0; id < param.Length; id++)
+                End_V(param[id]);
         }
 
         public static void Import(string[] paths)

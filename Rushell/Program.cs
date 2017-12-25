@@ -190,8 +190,7 @@ namespace Rushell
                         if (Memoria.varn.Contains(args[0]))
                             Memoria.Set_V(args);
                         else if (Memoria.defn.Contains(args[0]))
-                            foreach (string line in Memoria.Get_D(args[0]))
-                                ConsoleAnalizer(line.Replace("@", "\""));
+                            Memoria.Call_D(args);
                         else if (Memoria.dlln.Contains(args[0]))
                             Memoria.dll_m(args);
                         else if (Memoria.insn.Contains(args[0]))
