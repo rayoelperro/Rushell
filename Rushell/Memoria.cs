@@ -9,6 +9,9 @@ namespace Rushell
 {
     class Memoria
     {
+        public static ArrayList Pila = new ArrayList();
+        public static int PilaActual = 0;
+
         public static ArrayList varn = new ArrayList();
         public static ArrayList varv = new ArrayList();
 
@@ -25,6 +28,16 @@ namespace Rushell
         public static ArrayList insn = new ArrayList();
         public static ArrayList insv = new ArrayList();
         public static ArrayList inso = new ArrayList();
+
+        public static ArrayList condition = new ArrayList();
+        public static ArrayList whiler = new ArrayList();
+        public static bool whilerstop = false;
+        public static ArrayList repeater = new ArrayList();
+        public static bool repeaterstop = false;
+        public static bool defining = false;
+        public static bool init = false;
+
+        public static int repeatvalue = 0;
 
         public static string CScompilerpath = @"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe";
 
@@ -118,6 +131,11 @@ namespace Rushell
             {
                 defp.Add(new string[] { });
             }
+            if(((string)arr[0]) == "then")
+            {
+                defining = true;
+                arr.RemoveAt(0);
+            }
             defv.Add((string[])arr.ToArray(typeof(string)));
         }
 
@@ -145,9 +163,11 @@ namespace Rushell
                 {
                     StreamReader sr = new StreamReader(paths[imp]);
                     string st = "";
+                    init = true;
                     while ((st = sr.ReadLine()) != null)
-                        if (st.StartsWith("def "))
+                        if (st.StartsWith("def ") || st.StartsWith("init "))
                             Program.ConsoleAnalizer(st);
+                    init = false;
                 }
                 else
                 {
@@ -161,13 +181,13 @@ namespace Rushell
             if (args[2].Equals("load") && args.Length > 2)
             {
                 if (!File.Exists(args[1]))
-                    if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + args[1]))
+                    if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + args[1]))
                     {
-                        Comandos.error("Directory no encontrado: " + args[1]);
+                        Comandos.error("Directorio no encontrado: " + args[1]);
                         return;
                     }
                     else
-                        args[1] = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + args[1];
+                        args[1] = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + args[1];
                 Assembly ldr = Assembly.LoadFile(args[1]);
                 for (int x = 3; x < args.Length; x++)
                 {

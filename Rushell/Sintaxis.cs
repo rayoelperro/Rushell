@@ -10,7 +10,7 @@ namespace Rushell
         {
             a_ = a_.Replace("!always()", int.MaxValue.ToString());
             a_ = a_.Replace("!never()", int.MinValue.ToString());
-            a_ = a_.Replace("!repetivevalue()", Environment.GetEnvironmentVariable("Repeat", EnvironmentVariableTarget.Process));
+            a_ = a_.Replace("!repeatvalue()", Memoria.repeatvalue.ToString());
             a_ = a_.Replace("!here()", System.IO.Directory.GetCurrentDirectory());
             a_ = a_.Replace("!there()", System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
 

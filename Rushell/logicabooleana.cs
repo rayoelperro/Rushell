@@ -8,7 +8,10 @@ namespace Rushell
 
         public logicabooleana(string expresion)
         {
-            this.Expresion = expresion;
+            if (expresion.StartsWith("(") && expresion.EndsWith(")"))
+                Expresion = expresion;
+            else
+                Expresion = "(" + expresion + ")";
         }
 
         public bool operar()

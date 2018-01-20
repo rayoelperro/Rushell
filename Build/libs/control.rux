@@ -1,0 +1,2 @@
+init from \libs\control.dll load control
+init from control instantiate control

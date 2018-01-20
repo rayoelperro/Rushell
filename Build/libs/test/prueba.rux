@@ -1,0 +1,6 @@
+def test then
+"repeat 20 then"
+"write a"
+"write b"
+"end repeat"
+end def

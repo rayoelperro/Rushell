@@ -9,6 +9,10 @@ class file
 		this.path = path;
 	}
 	
+	public void settarget(string target){
+		path = target;
+	}
+	
 	public void rewrite(string co){
 		File.WriteAllText(path,co);
 	}

@@ -1,3 +1,12 @@
 clear
-repeat 25 inv "write @!math(25-!repetivevalue())@" "wait 1000" "if @(!repetivevalue() == 24)@ # else clear"
-write "boom!!!!!!!!!!"
+repeat 25 then
+	write !math(25-!repeatvalue())
+	wait 1000
+	if "(!repeatvalue() == 24)" then
+		clear
+		write 0
+	else
+		clear
+	end if
+end repeat
+write "End countdown"

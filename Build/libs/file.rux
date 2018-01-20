@@ -1,0 +1,2 @@
+init from \libs\io.dll load file
+init from file instantiate afile null

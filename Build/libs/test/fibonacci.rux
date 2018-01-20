@@ -1,4 +1,12 @@
-var x 0
+def fibonacci $max then
+	"while @(!a < !max)@ then"
+		"write !a"
+		"x @!math(!a + !b)@"
+		"b !a"
+		"a !x"
+	"end while"
+end def
 var a 1
-var b 0
-repeat 10 inv "math @!a+!b@" "x !a" "a !b" "b @!math(!x+!b)@"
+var b 1
+var x 0
+fibonacci 100
