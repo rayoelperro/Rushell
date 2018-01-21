@@ -29,6 +29,9 @@ namespace Rushell
         public static ArrayList insv = new ArrayList();
         public static ArrayList inso = new ArrayList();
 
+        public static ArrayList iton = new ArrayList();
+        public static ArrayList itov = new ArrayList();
+
         public static ArrayList condition = new ArrayList();
         public static ArrayList whiler = new ArrayList();
         public static bool whilerstop = false;
@@ -38,8 +41,6 @@ namespace Rushell
         public static bool init = false;
 
         public static int repeatvalue = 0;
-
-        public static string CScompilerpath = @"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe";
 
         public static void Add_V(string[] args)
         {
@@ -136,12 +137,9 @@ namespace Rushell
                 defining = true;
                 arr.RemoveAt(0);
             }
-            defv.Add((string[])arr.ToArray(typeof(string)));
-        }
-
-        public static string[] Get_D(string name)
-        {
-            return (string[])defv[defn.IndexOf(name)];
+            ArrayList ins = new ArrayList();
+            ins.Add((string[])arr.ToArray(typeof(string)));
+            defv.Add(ins);
         }
 
         public static void Call_D(string[] args)
@@ -149,8 +147,8 @@ namespace Rushell
             string[] param = ((string[])defp[defn.IndexOf(args[0])]);
             for (int id = 0; id < param.Length; id++)
                 Add_V(new string[] {"var", param[id], args[id+1]});
-            foreach (string line in Get_D(args[0]))
-                Program.ConsoleAnalizer(line.Replace("@", "\""));
+            foreach (string[] line in (ArrayList)defv[defn.IndexOf(args[0])])
+                Program.Procesar(line);
             for (int id = 0; id < param.Length; id++)
                 End_V(param[id]);
         }
@@ -165,7 +163,7 @@ namespace Rushell
                     string st = "";
                     init = true;
                     while ((st = sr.ReadLine()) != null)
-                        if (st.StartsWith("def ") || st.StartsWith("init "))
+                        if (st.StartsWith("def ") || st.StartsWith("init ") || defining)
                             Program.ConsoleAnalizer(st);
                     init = false;
                 }
@@ -178,7 +176,15 @@ namespace Rushell
 
         public static void from_i(string[] args)
         {
-            if (args[2].Equals("load") && args.Length > 2)
+            if (args[3].Equals("to") && args.Length == 5)
+            {
+                if (insn.Contains(args[1]))
+                {
+                    iton.Add(args[4]);
+                    itov.Add(new string[] { args[1], args[2] });
+                }
+            }
+            else if (args[2].Equals("load") && args.Length > 2)
             {
                 if (!File.Exists(args[1]))
                     if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + args[1]))
@@ -274,16 +280,45 @@ namespace Rushell
             }
             else if (args.Length > 2)
             {
-                object[] param = new object[args.Length - 2];
+                ArrayList param = new ArrayList();
+                bool paramson = false;
+                ArrayList paramsons = new ArrayList();
                 for (int x = 2; x < args.Length; x++)
-                    param[x - 2] = args[x];
-                return toinv.Invoke(insv[insn.IndexOf(args[0])], param);
+                {
+                    if (paramson)
+                    {
+                        paramsons.Add(Sintaxis.Analizar(args[x]));
+                    }
+                    else
+                    {
+                        if (args[x] == "$")
+                            paramson = true;
+                        else
+                            param.Add(Sintaxis.Analizar(args[x]));
+                    }
+                }
+                if (paramson)
+                    param.Add((string[])paramsons.ToArray(typeof(string)));
+                return toinv.Invoke(insv[insn.IndexOf(args[0])], (object[])param.ToArray(typeof(object)));
             }
             else
             {
                 Comandos.error("Insuficientes argumentos");
             }
             return null;
+        }
+
+        public static object ito_m(string[] args)
+        {
+            string[] par = new string[args.Length + 1];
+            for (int x = 1; x < par.Length; x++)
+            {
+                par[x] = args[x - 1];
+            }
+            string[] p = (string[])itov[iton.IndexOf(args[0])];
+            par[0] = p[0];
+            par[1] = p[1];
+            return ins_m(par);
         }
     }
 }

@@ -1,0 +1,2 @@
+init from \libs\zeus.dll load General
+init from General instantiate general

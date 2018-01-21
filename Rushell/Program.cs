@@ -11,8 +11,7 @@ namespace Rushell
 
         public static void head()
         {
-            Console.WriteLine("Rushell Version: " + product + "\nFor: " + Environment.OSVersion);
-            Console.WriteLine("");
+            Console.WriteLine("Rushell Version: " + product + "\nFor: " + Environment.OSVersion + "\n");
             Console.BackgroundColor = ConsoleColor.Black;
         }
 
@@ -144,17 +143,9 @@ namespace Rushell
                         {
                             Memoria.defining = false;
                         }
-                        else if (args.Length == 1)
-                        {
-                            string[] pre = (string[])Memoria.defv[Memoria.defv.Count - 1];
-                            string[] pos = new string[pre.Length + 1];
-                            pre.CopyTo(pos, 0);
-                            pos[pos.Length - 1] = args[0];
-                            Memoria.defv[Memoria.defv.Count - 1] = pos;
-                        }
                         else
                         {
-                            Comandos.error("Demasiados argumentos para una instruccion de defición: " + string.Join(" ",args));
+                            ((ArrayList)Memoria.defv[Memoria.defv.Count - 1]).Add(args);
                         }
                     }
                     else
@@ -214,12 +205,6 @@ namespace Rushell
                 case "fun":
                     Memoria.Add_F(args);
                     break;
-                case "cscom":
-                    Comandos.CScompiler(args);
-                    break;
-                case "call":
-                    Comandos.write(Comandos.call(args));
-                    break;
                 case "overfile":
                     Comandos.writefile(args);
                     break;
@@ -264,10 +249,6 @@ namespace Rushell
                 case "run":
                     Comandos.loadscript(args[1]);
                     break;
-                case "stop":
-                    Console.ReadKey();
-                    Environment.Exit(-1);
-                    break;
                 case "end":
                     Comandos.end(args);
                     break;
@@ -288,6 +269,8 @@ namespace Rushell
                         Memoria.dll_m(args);
                     else if (Memoria.insn.Contains(args[0]))
                         Memoria.ins_m(args);
+                    else if (Memoria.iton.Contains(args[0]))
+                        Memoria.ito_m(args);
                     else
                         Comandos.error("Comando erroneo: " + args[0]);
                     break;

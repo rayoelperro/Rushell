@@ -24,18 +24,10 @@ namespace Rushell
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public static void error(string[] args)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            for (int ar = 1; ar < args.Length; ar++)
-                Console.WriteLine(Sintaxis.Analizar(args[ar]));
-            Console.ForegroundColor = ConsoleColor.White;
-        }
-
         public static void error(string ln)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(Sintaxis.Analizar(ln));
+            Console.WriteLine(new Exception(ln).ToString());
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -52,6 +44,14 @@ namespace Rushell
             Console.ForegroundColor = ConsoleColor.Cyan;
             Sintaxis.Analizar(ln);
             Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static string exp(string wrt)
+        {
+            string n = new Expression(wrt).calculate().ToString();
+            if (n == "NeuN")
+                error("Ecuación matemática erronea: " + wrt);
+            return n;
         }
 
         public static void end(string[] args)
@@ -202,7 +202,7 @@ namespace Rushell
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             for (int ar = 1; ar < args.Length; ar++)
-                Console.WriteLine(new Expression(Sintaxis.Analizar(args[ar])).calculate());
+                Console.WriteLine(exp(args[ar]));
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -278,53 +278,6 @@ namespace Rushell
                     Console.Write(" ");
                 else
                     error("Salto inidentificado: " + args[ar]);
-        }
-
-        public static void CScompiler(string[] args)
-        {
-            if (File.Exists(args[1]))
-            {
-                ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c " + Memoria.CScompilerpath + " " + args[1]);
-                procStartInfo.RedirectStandardOutput = true;
-                procStartInfo.UseShellExecute = false;
-                procStartInfo.CreateNoWindow = true;
-                procStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                Process proc = new Process();
-                proc.StartInfo = procStartInfo;
-                proc.Start();
-
-                string result = proc.StandardOutput.ReadToEnd();
-            }
-            else
-            {
-                error("El archivo: " + args[1] + " no existe");
-            }
-        }
-
-        public static string call(string[] args)
-        {
-            string command = string.Join(" ", args).Substring(5);
-            if (string.Join(" ", args).Substring(5).Length > args[1].Length)
-                command = args[1] + Sintaxis.Analizar(" \"" + string.Join(" ", args).Substring(6 + args[1].Length).Replace(" ", "\" \"") + "\"");
-            if (args[1].EndsWith(".jar"))
-                command = "java -jar " + command;
-            else if (args[1].EndsWith(".py"))
-                command = "python " + command;
-            ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c " + command);
-            procStartInfo.RedirectStandardOutput = true;
-            procStartInfo.RedirectStandardInput = true;
-            procStartInfo.UseShellExecute = false;
-            procStartInfo.CreateNoWindow = true;
-            procStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            Process proc = new Process();
-            proc.StartInfo = procStartInfo;
-            proc.Start();
-
-            for (int hrg = 1; hrg < args.Length; hrg++)
-                proc.StandardInput.WriteLine(args[hrg]);
-
-            string result = proc.StandardOutput.ReadToEnd();
-            return result;
         }
 
         public static void loadscript(string path)

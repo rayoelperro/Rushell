@@ -1,0 +1,4 @@
+init from \libs\zeus.dll load PythonCaller
+init from PythonCaller instantiate python
+init from python Write to pyquery
+init from python Finish to pyresponse

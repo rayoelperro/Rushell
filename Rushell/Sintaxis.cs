@@ -1,5 +1,6 @@
 ﻿using org.mariuszgromada.math.mxparser;
 using System;
+using System.Collections;
 using System.Text.RegularExpressions;
 
 namespace Rushell
@@ -46,10 +47,10 @@ namespace Rushell
                 {
                     try
                     {
-                        if(a_.Contains("!" + Memoria.defn[al].ToString()))
+                        if (a_.Contains("!" + Memoria.defn[al].ToString()))
                         {
                             a_ = a_.Replace("!" + Memoria.defn[al].ToString(), "");
-                            foreach (string line in Memoria.Get_D(Memoria.defn[al].ToString()))
+                            foreach (string line in (ArrayList)Memoria.defv[Memoria.defn.IndexOf(Memoria.defn[al].ToString())])
                                 Program.ConsoleAnalizer(line.Replace("@", "\""));
                             Console.ForegroundColor = ConsoleColor.Cyan;
                         }
@@ -215,6 +216,51 @@ namespace Rushell
                 }
             }
 
+            if (Memoria.iton.Count > 0 && Memoria.itov.Count > 0)
+            {
+                for (int ax = 0; ax < Memoria.iton.Count; ax++)
+                {
+                    try
+                    {
+                        while (a_.Contains("!" + Memoria.iton[ax].ToString()))
+                        {
+                            string ael = "";
+                            int o = a_.IndexOf("!" + Memoria.iton[ax].ToString());
+                            bool ok = false;
+                            for (int la = o + Memoria.iton[ax].ToString().Length + 1; la < a_.Length; la++)
+                            {
+                                if (ok)
+                                {
+                                    if (a_[la] == ')')
+                                    {
+                                        ok = false;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        ael += a_[la];
+                                    }
+                                }
+                                if (la == o + Memoria.iton[ax].ToString().Length + 1 && a_[la] == '(')
+                                {
+                                    ok = true;
+                                }
+                            }
+                            string[] aels = ael.Split(',');
+                            string[] args = new string[aels.Length+1];
+                            args[0] = Memoria.iton[ax].ToString();
+                            for (int j = 1; j < args.Length; j++)
+                                args[j] = aels[j - 1];
+                            a_ = a_.Replace("!" + Memoria.iton[ax].ToString() + "(" + ael + ")", Memoria.ito_m(args).ToString());
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+            }
+
             while (a_.Contains("!read"))
             {
                 int fir = a_.IndexOf("!read");
@@ -268,7 +314,8 @@ namespace Rushell
                         ok = true;
                     }
                 }
-                a_ = new Regex(Regex.Escape("!math(" + wrt + ")")).Replace(a_, new Expression(wrt).calculate().ToString(), 1);
+                string res = Comandos.exp(wrt);
+                a_ = new Regex(Regex.Escape("!math(" + wrt + ")")).Replace(a_, res, 1);
             }
 
             while (a_.Contains("!logic"))
@@ -295,32 +342,6 @@ namespace Rushell
                     }
                 }
                 a_ = new Regex(Regex.Escape("!logic(" + wrt + ")")).Replace(a_, new logicabooleana("(" + wrt + ")").operar().ToString(), 1);
-            }
-
-            while (a_.Contains("!call"))
-            {
-                int fir = a_.IndexOf("!call");
-                string wrt = "";
-                bool ok = false;
-                for (int lon = fir + "!call".Length; lon < a_.Length; lon++)
-                {
-                    if (a_[lon] == ')')
-                    {
-                        ok = false;
-                    }
-                    else
-                    {
-                        if (ok)
-                        {
-                            wrt += a_[lon];
-                        }
-                    }
-                    if (a_[lon] == '(')
-                    {
-                        ok = true;
-                    }
-                }
-                a_ = new Regex(Regex.Escape("!call(" + wrt + ")")).Replace(a_, string.Join(" ", Comandos.call(("call," + wrt).Split(','))), 1);
             }
 
             while (a_.Contains("!invoke"))

@@ -1,10 +1,10 @@
 def fibonacci $max then
-	"while @(!a < !max)@ then"
-		"write !a"
-		"x @!math(!a + !b)@"
-		"b !a"
-		"a !x"
-	"end while"
+	while "(!a < !max)" then
+		write !a
+		x !math(!a+!b)
+		b !a
+		a !x
+	end while
 end def
 var a 1
 var b 1

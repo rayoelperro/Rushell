@@ -1,0 +1,4 @@
+from /libs/zeus.dll load CSC
+from CSC instantiate csc
+csc exe test.cs
+write "Finish!"

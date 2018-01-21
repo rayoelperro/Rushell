@@ -1,2 +1,8 @@
-def defgreet "write @Hello world@"
-def defwait "write one" "wait 200" "write two"
+def defgreet then
+	write "Hello world"
+end def
+def defwait then 
+	write one
+	wait 200
+	write two
+end def
