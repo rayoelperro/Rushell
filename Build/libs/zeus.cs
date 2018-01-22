@@ -74,12 +74,17 @@ public class ConsoleCaller
 {
     protected Process c;
     protected string r = null;
+	private string name = "";
+    private string[] args = null;
 
     public void Start(string name){
+		this.name = name;
         Config(name,new string[]{});
     }
 
     public void Start(string name, params string[] args){
+		this.name = name;
+        this.args = args;
         Config(name,args);
     }
 
@@ -92,10 +97,16 @@ public class ConsoleCaller
         sti.WindowStyle = ProcessWindowStyle.Hidden;
         c = new Process();
         c.StartInfo = sti;
+		r = null;
         c.Start();
     }
 
     public virtual void Write(string pline){
+		if(r != null)
+            if(args != null)
+                Config(name,args);
+            else
+			    Config(name,new string[]{});
         c.StandardInput.WriteLine(pline);
     }
 

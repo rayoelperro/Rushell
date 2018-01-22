@@ -9,7 +9,7 @@ namespace Rushell
 {
     class Comandos
     {
-        public static void write(string[] args)
+        public static void writeln(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             for (int ar = 1; ar < args.Length; ar++)
@@ -17,10 +17,24 @@ namespace Rushell
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        public static void write(string ln)
+        public static void write(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine(Sintaxis.Analizar(ln));
+            for (int ar = 1; ar < args.Length; ar++)
+                Console.Write(Sintaxis.Analizar(args[ar]));
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void writeli(string[] args)
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            for (int ar = 1; ar < args.Length; ar++)
+            {
+                Console.Write(Sintaxis.Analizar(args[ar]));
+                if (ar < args.Length - 1)
+                    Console.Write(" ");
+            }
+            Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -69,7 +83,7 @@ namespace Rushell
             else if (args.Length == 3)
             {
                 if (args[1] == "prompt")
-                    write(args[2]);
+                    write(new string[] { args[2] });
                 Console.ReadKey();
                 Environment.Exit(-1);
             }
@@ -242,21 +256,33 @@ namespace Rushell
             else
             {
                 int els = Array.IndexOf(args, "else");
-                if (new logicabooleana(args[1]).operar())
+                if (els != -1)
                 {
-                    string[] sub = new string[els - 2];
+                    if (new logicabooleana(args[1]).operar())
+                    {
+                        string[] sub = new string[els - 2];
+                        for (int pl = 0; pl < sub.Length; pl++)
+                        {
+                            sub[pl] = args[pl + 2];
+                        }
+                        Program.Procesar(sub);
+                    }
+                    else
+                    {
+                        string[] sub = new string[args.Length - (els + 1)];
+                        for (int pl = 0; pl < sub.Length; pl++)
+                        {
+                            sub[pl] = args[pl + els + 1];
+                        }
+                        Program.Procesar(sub);
+                    }
+                }
+                else if (new logicabooleana(args[1]).operar())
+                {
+                    string[] sub = new string[args.Length-2];
                     for (int pl = 0; pl < sub.Length; pl++)
                     {
                         sub[pl] = args[pl + 2];
-                    }
-                    Program.Procesar(sub);
-                }
-                else
-                {
-                    string[] sub = new string[args.Length - (els + 1)];
-                    for (int pl = 0; pl < sub.Length; pl++)
-                    {
-                        sub[pl] = args[pl + els + 1];
                     }
                     Program.Procesar(sub);
                 }

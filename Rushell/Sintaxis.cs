@@ -14,6 +14,8 @@ namespace Rushell
             a_ = a_.Replace("!repeatvalue()", Memoria.repeatvalue.ToString());
             a_ = a_.Replace("!here()", System.IO.Directory.GetCurrentDirectory());
             a_ = a_.Replace("!there()", System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
+            a_ = a_.Replace("\\n", "\n");
+            a_ = a_.Replace("\\t", "\t");
 
             if (Memoria.varn.Count > 0 && Memoria.varv.Count > 0)
             {
@@ -47,12 +49,45 @@ namespace Rushell
                 {
                     try
                     {
-                        if (a_.Contains("!" + Memoria.defn[al].ToString()))
+                        while (a_.Contains("!" + Memoria.defn[al].ToString()))
                         {
-                            a_ = a_.Replace("!" + Memoria.defn[al].ToString(), "");
-                            foreach (string line in (ArrayList)Memoria.defv[Memoria.defn.IndexOf(Memoria.defn[al].ToString())])
-                                Program.ConsoleAnalizer(line.Replace("@", "\""));
-                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            string ael = "";
+                            int o = a_.IndexOf("!" + Memoria.defn[al].ToString());
+                            bool ok = false;
+                            for (int la = o + Memoria.defn[al].ToString().Length + 1; la < a_.Length; la++)
+                            {
+                                if (ok)
+                                {
+                                    if (a_[la] == ')')
+                                    {
+                                        ok = false;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        ael += a_[la];
+                                    }
+                                }
+                                if (la == o + Memoria.defn[al].ToString().Length + 1 && a_[la] == '(')
+                                {
+                                    ok = true;
+                                }
+                            }
+                            string[] args = null;
+                            if (ael != "")
+                            {
+                                string[] aels = ael.Split(',');
+                                args = new string[aels.Length + 1];
+                                args[0] = Memoria.defn[al].ToString();
+                                for (int j = 1; j < args.Length; j++)
+                                    args[j] = aels[j - 1];
+                            }
+                            else
+                            {
+                                args = new string[] { Memoria.defn[al].ToString() };
+                            }
+                            Memoria.Call_D(args);
+                            a_ = a_.Replace("!" + Memoria.defn[al].ToString() + "(" + ael + ")", "");
                         }
                     }
                     catch (Exception)
@@ -246,11 +281,19 @@ namespace Rushell
                                     ok = true;
                                 }
                             }
-                            string[] aels = ael.Split(',');
-                            string[] args = new string[aels.Length+1];
-                            args[0] = Memoria.iton[ax].ToString();
-                            for (int j = 1; j < args.Length; j++)
-                                args[j] = aels[j - 1];
+                            string[] args = null;
+                            if (ael != "")
+                            {
+                                string[] aels = ael.Split(',');
+                                args = new string[aels.Length + 1];
+                                args[0] = Memoria.iton[ax].ToString();
+                                for (int j = 1; j < args.Length; j++)
+                                    args[j] = aels[j - 1];
+                            }
+                            else
+                            {
+                                args = new string[] { Memoria.iton[ax].ToString() };
+                            }
                             a_ = a_.Replace("!" + Memoria.iton[ax].ToString() + "(" + ael + ")", Memoria.ito_m(args).ToString());
                         }
                     }

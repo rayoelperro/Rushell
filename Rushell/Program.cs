@@ -178,6 +178,12 @@ namespace Rushell
                 case "write":
                     Comandos.write(args);
                     break;
+                case "writeli":
+                    Comandos.writeli(args);
+                    break;
+                case "writeln":
+                    Comandos.writeln(args);
+                    break;
                 case "exit":
                     Environment.Exit(-1);
                     break;

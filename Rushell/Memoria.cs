@@ -145,12 +145,17 @@ namespace Rushell
         public static void Call_D(string[] args)
         {
             string[] param = ((string[])defp[defn.IndexOf(args[0])]);
-            for (int id = 0; id < param.Length; id++)
-                Add_V(new string[] {"var", param[id], args[id+1]});
-            foreach (string[] line in (ArrayList)defv[defn.IndexOf(args[0])])
-                Program.Procesar(line);
-            for (int id = 0; id < param.Length; id++)
-                End_V(param[id]);
+            if (param.Length != args.Length - 1)
+                Comandos.error("El número de parámetros no coincidía");
+            else
+            {
+                for (int id = 0; id < param.Length; id++)
+                    Add_V(new string[] { "var", param[id], args[id + 1] });
+                foreach (string[] line in (ArrayList)defv[defn.IndexOf(args[0])])
+                    Program.Procesar(line);
+                for (int id = 0; id < param.Length; id++)
+                    End_V(param[id]);
+            }
         }
 
         public static void Import(string[] paths)
