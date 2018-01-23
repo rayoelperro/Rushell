@@ -34,10 +34,15 @@ namespace Rushell
 
         public static ArrayList condition = new ArrayList();
         public static ArrayList whiler = new ArrayList();
-        public static bool whilerstop = false;
         public static ArrayList repeater = new ArrayList();
+
+        public static bool whilerstop = false;
         public static bool repeaterstop = false;
+
+        public static bool indef = false;
+
         public static bool defining = false;
+
         public static bool init = false;
 
         public static int repeatvalue = 0;
@@ -149,6 +154,7 @@ namespace Rushell
                 Comandos.error("El número de parámetros no coincidía");
             else
             {
+                indef = true;
                 for (int id = 0; id < param.Length; id++)
                     Add_V(new string[] { "var", param[id], args[id + 1] });
                 foreach (string[] line in (ArrayList)defv[defn.IndexOf(args[0])])

@@ -1,8 +1,8 @@
 def defgreet then
-	write "Hello world"
+	writeln "Hello world"
 end def
 def defwait then 
-	write one
+	writeln one
 	wait 200
-	write two
+	writeln two
 end def

@@ -72,7 +72,6 @@ namespace Rushell
         {
             if (args.Length == 2)
             {
-                Program.Procesar(new string[] { "#" });
                 if (args[1] == "repeat")
                     repeater();
                 else if (args[1] == "while")
@@ -140,7 +139,14 @@ namespace Rushell
                 int times = ((int[])Memoria.repeater[Memoria.repeater.Count - 1])[0];
                 int value = ((int[])Memoria.repeater[Memoria.repeater.Count - 1])[1];
                 ArrayList l = new ArrayList();
-                for (int x = value + 1; x <= Memoria.PilaActual - 1; x++)
+                int pl = Memoria.PilaActual - 1;
+                int st = value + 1;
+                if (Memoria.indef)
+                {
+                    pl += 1;
+                    st += 1;
+                }
+                for (int x = st; x <= pl; x++)
                 {
                     l.Add(Memoria.Pila[x]);
                 }
@@ -149,7 +155,7 @@ namespace Rushell
                     Memoria.repeatvalue = x + 1;
                     for (int y = 0; y < l.Count; y++)
                     {
-                        Program.Clasificar((string[])l[y]);
+                        Program.Procesar((string[])l[y]);
                     }
                 }
                 Memoria.repeater.RemoveAt(Memoria.repeater.Count - 1);
@@ -166,7 +172,7 @@ namespace Rushell
             {
                 if (args.Length > 3)
                 {
-                    error("Demasiados terminos para el comando repeat");
+                    error("Demasiados terminos para el comando while");
                 }
                 else
                 {
@@ -193,7 +199,10 @@ namespace Rushell
                 string condicion = ((string[])Memoria.whiler[Memoria.whiler.Count - 1])[0];
                 int value = int.Parse(((string[])Memoria.whiler[Memoria.whiler.Count - 1])[1]);
                 ArrayList l = new ArrayList();
-                for (int x = value + 1; x <= Memoria.PilaActual - 1; x++)
+                int pl = Memoria.PilaActual - 1;
+                if (Memoria.indef)
+                    pl += 1;
+                for (int x = value + 1; x <= pl; x++)
                 {
                     l.Add(Memoria.Pila[x]);
                 }
@@ -208,7 +217,7 @@ namespace Rushell
             }
             else
             {
-                error("No hay ningún whiler abierto");
+                error("No hay ningún while abierto");
             }
         }
 

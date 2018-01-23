@@ -1,2 +1,2 @@
-async repeat !always() write "first"
-async repeat !always() write "second"
+async repeat !always() writeln "first"
+async repeat !always() writeln "second"

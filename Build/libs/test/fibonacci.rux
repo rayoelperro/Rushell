@@ -1,6 +1,6 @@
 def fibonacci $max then
 	while "(!a < !max)" then
-		write !a
+		writeln !a
 		x !math(!a+!b)
 		b !a
 		a !x

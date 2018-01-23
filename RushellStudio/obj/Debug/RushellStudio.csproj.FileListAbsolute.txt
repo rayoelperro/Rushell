@@ -1,0 +1,9 @@
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\bin\Debug\RushellStudio.exe.config
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\bin\Debug\RushellStudio.exe
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\bin\Debug\RushellStudio.pdb
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.csprojResolveAssemblyReference.cache
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.Form1.resources
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.Properties.Resources.resources
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.csproj.GenerateResource.Cache
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.exe
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.pdb

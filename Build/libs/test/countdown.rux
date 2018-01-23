@@ -1,10 +1,8 @@
 clear
 repeat 25 then
-	write !math(25-!repeatvalue())
+	writeln !math(25-!repeatvalue())
 	wait 1000
 	if "(!repeatvalue() == 24)" then
-		clear
-		write 0
 	else
 		clear
 	end if
