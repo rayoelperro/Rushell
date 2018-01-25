@@ -1,1 +1,1 @@
-write "hello !read(your name:)"
+writeln "hello !read(your name:)"

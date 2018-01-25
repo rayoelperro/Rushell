@@ -3,36 +3,21 @@ using System.IO;
 
 class file
 {
-	private string path;
-	
+	string path;
+
 	public file(string path){
 		this.path = path;
 	}
-	
-	public void settarget(string target){
-		path = target;
+
+	public void SetPath(string path){
+		this.path = path;
 	}
-	
-	public void rewrite(string co){
-		File.WriteAllText(path,co);
-	}
-	
-	public void write(string co){
-		string pre = "";
-		if(File.Exists(path))
-			pre = File.ReadAllText(path);
-		File.WriteAllText(path,pre+co);
-	}
-	
-	public string read(){
+
+	public string Read(){
 		return File.ReadAllText(path);
 	}
-	
-	public void delete(){
-		File.Delete(path);
-	}
-	
-	public void create(){
-		File.Create(path);
+
+	public void Write(string text){
+		File.WriteAllText(path,text);
 	}
 }
