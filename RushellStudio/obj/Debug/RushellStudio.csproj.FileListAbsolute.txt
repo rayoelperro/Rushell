@@ -7,3 +7,7 @@ D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.Properti
 D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.csproj.GenerateResource.Cache
 D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.exe
 D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.pdb
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\bin\Debug\RushellStudio.exe.manifest
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\bin\Debug\RushellStudio.application
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.exe.manifest
+D:\Proyectos\VisualStudio\Rushell\RushellStudio\obj\Debug\RushellStudio.application

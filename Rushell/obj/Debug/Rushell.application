@@ -7,14 +7,14 @@
     <framework targetVersion="4.5.2" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="Rushell.exe.manifest" size="4200">
+    <dependentAssembly dependencyType="install" codebase="Rushell.exe.manifest" size="11075">
       <assemblyIdentity name="Rushell.exe" version="1.5.5.106" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>YznRgaQrJnah96EoHFDFb7cS6t/5m8hQJ798MS56TGo=</dsig:DigestValue>
+        <dsig:DigestValue>aeqoreY0zt6KHyoBnnsomhI2Pd+xXlupRZcxbPV7LqE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

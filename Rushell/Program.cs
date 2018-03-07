@@ -17,6 +17,10 @@ namespace Rushell
 
         public static void Main(string[] args)
         {
+            Shareable s = new Shareable();
+            Memoria.PythonEsc.SetVariable("memory", s);
+            Memoria.LuaEnv["memory"] = s;
+
             Console.Title = "Rushell";
             Console.BackgroundColor = ConsoleColor.Red;
             Console.ForegroundColor = ConsoleColor.White;
@@ -57,6 +61,15 @@ namespace Rushell
 
         public static void ConsoleAnalizer(string comando)
         {
+            if(Memoria.python_ing || Memoria.lua_ing)
+            {
+                if (comando.Length > 0)
+                    if (comando == "end python" || comando == "end lua")
+                        Procesar(comando.Split(' '));
+                    else
+                        Procesar(new string[] { comando });
+                return;
+            }
             ArrayList elementos = new ArrayList();
             string actual = null;
             bool comillas = false;
@@ -72,7 +85,16 @@ namespace Rushell
                 }
                 else if (comando[x] == '"')
                 {
-                    if (comillas)
+                    if (comando.Length > x - 1)
+                        if (comando[x - 1] != '\\')
+                            if (comillas)
+                                comillas = false;
+                            else
+                                comillas = true;
+                        else
+                            actual = actual.Remove(actual.Length - 1) + comando[x];
+                    else
+                        if (comillas)
                         comillas = false;
                     else
                         comillas = true;
@@ -148,25 +170,35 @@ namespace Rushell
                             ((ArrayList)Memoria.defv[Memoria.defv.Count - 1]).Add(args);
                         }
                     }
-                    else
-                    {
-                        if(!Memoria.repeaterstop && !Memoria.whilerstop)
-                            swc(args);
-                        else if (Memoria.whilerstop)
-                        {
-                            if (args[0] == "end" && args[1] == "while" && args.Length == 2)
-                                swc(args);
-                        }
-                        else if (Memoria.repeaterstop)
-                        {
-                            if (args[0] == "end" && args[1] == "repeat" && args.Length == 2)
-                                swc(args);
-                        }
+                    else if (Memoria.python_ing)
+                        if (args.Length == 2 && args[0] == "end" && args[1] == "python")
+                            Comandos.end(args);
                         else
+                            Memoria.PythonArgs += String.Join(" ", args) + "\n";
+                    else if (Memoria.lua_ing)
+                        if (args.Length == 2 && args[0] == "end" && args[1] == "lua")
+                            Comandos.end(args);
+                        else
+                            Memoria.LuaArgs += String.Join(" ", args) + "\n";
+                    else
                         {
-                            Comandos.error("Error de analisis");
+                            if (!Memoria.repeaterstop && !Memoria.whilerstop)
+                                swc(args);
+                            else if (Memoria.whilerstop)
+                            {
+                                if (args[0] == "end" && args[1] == "while" && args.Length == 2)
+                                    swc(args);
+                            }
+                            else if (Memoria.repeaterstop)
+                            {
+                                if (args[0] == "end" && args[1] == "repeat" && args.Length == 2)
+                                    swc(args);
+                            }
+                            else
+                            {
+                                Comandos.error("Error de analisis");
+                            }
                         }
-                    }
                 }
             }
         }
@@ -178,11 +210,20 @@ namespace Rushell
                 case "write":
                     Comandos.write(args);
                     break;
+                case "writef":
+                    Comandos.writef(args);
+                    break;
                 case "writeli":
                     Comandos.writeli(args);
                     break;
+                case "writeliln":
+                    Comandos.writeliln(args);
+                    break;
                 case "writeln":
                     Comandos.writeln(args);
+                    break;
+                case "writefln":
+                    Comandos.writefln(args);
                     break;
                 case "exit":
                     Environment.Exit(-1);
@@ -206,7 +247,16 @@ namespace Rushell
                     Comandos.if_else(args);
                     break;
                 case "var":
-                    Memoria.Add_V(args);
+                    Memoria.Add_V(true,args);
+                    break;
+                case "number":
+                    Memoria.Add_V("number",args);
+                    break;
+                case "bool":
+                    Memoria.Add_V("bool", args);
+                    break;
+                case "str":
+                    Memoria.Add_V("str", args);
                     break;
                 case "fun":
                     Memoria.Add_F(args);
@@ -250,6 +300,9 @@ namespace Rushell
                 case "async":
                     Comandos.async(args);
                     break;
+                case "system":
+                    Comandos.system(args);
+                    break;
                 case "#":
                     break;
                 case "run":
@@ -257,6 +310,18 @@ namespace Rushell
                     break;
                 case "end":
                     Comandos.end(args);
+                    break;
+                case "lua":
+                    Comandos.lua(args);
+                    break;
+                case "python":
+                    Comandos.python(args);
+                    break;
+                case "instance":
+                    Comandos.instance(args);
+                    break;
+                case "output":
+                    Comandos.output(args);
                     break;
                 case "init":
                     if (Memoria.init)
@@ -286,7 +351,7 @@ namespace Rushell
         public static void arguments(string[] fullargs)
         {
             for (int ar = 1; ar < fullargs.Length; ar++)
-                Memoria.Add_V(new string[] { "var", "arg" + (ar-1), fullargs[ar] });
+                Memoria.Add_V(true, new string[] { "var", "arg" + (ar-1), fullargs[ar] });
         }
     }
 }

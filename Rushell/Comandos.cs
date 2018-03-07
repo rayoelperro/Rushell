@@ -1,6 +1,8 @@
-﻿using org.mariuszgromada.math.mxparser;
+﻿using Microsoft.Scripting.Hosting;
+using org.mariuszgromada.math.mxparser;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -25,17 +27,36 @@ namespace Rushell
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        public static void writeliln(string[] args)
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            for (int ar = 1; ar < args.Length; ar++)
+                Console.WriteLine(args[ar]);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
         public static void writeli(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             for (int ar = 1; ar < args.Length; ar++)
-            {
-                Console.Write(Sintaxis.Analizar(args[ar]));
-                if (ar < args.Length - 1)
-                    Console.Write(" ");
-            }
-            Console.WriteLine();
+                Console.Write(args[ar]);
             Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static void writef(string[] args)
+        {
+            List<string> l = new List<string>(args);
+            l.RemoveAt(0);
+            l.RemoveAt(0);
+            for (int x = 0; x < l.Count; x++)
+                l[x] = Sintaxis.Analizar(l[x]);
+            Console.Write(String.Format(Sintaxis.Analizar(args[1]),l.ToArray()));
+        }
+
+        public static void writefln(string[] args)
+        {
+            args[1] += "\n";
+            writef(args);
         }
 
         public static void error(string ln)
@@ -76,6 +97,10 @@ namespace Rushell
                     repeater();
                 else if (args[1] == "while")
                     whiler();
+                else if (args[1] == "lua")
+                    endlua();
+                else if (args[1] == "python")
+                    endpython();
                 else
                     error("La declaración que intentas terminar no existe: " + args[1]);
             }
@@ -83,6 +108,8 @@ namespace Rushell
             {
                 if (args[1] == "prompt")
                     write(new string[] { args[2] });
+                else
+                    error("La declaración que intentas terminar no existe: " + args[1]);
                 Console.ReadKey();
                 Environment.Exit(-1);
             }
@@ -90,6 +117,83 @@ namespace Rushell
             {
                 Console.ReadKey();
                 Environment.Exit(-1);
+            }
+            else
+            {
+                error("Demasiados argumentos para la funcion 'end'");
+            }
+        }
+
+        public static void endpython()
+        {
+            if (Memoria.python_ing)
+            {
+                apython(Memoria.PythonArgs,false);
+            }
+            else
+            {
+                error("Se intento finalizar un proceso de python que no existe");
+            }
+        }
+
+        public static void endlua()
+        {
+            if (Memoria.lua_ing)
+            {
+                alua(Memoria.LuaArgs,false);
+            }
+            else
+            {
+                error("Se intento finalizar un proceso de lua que no existe");
+            }
+        }
+
+        public static void apython(string c, bool frompath)
+        {
+            try
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                ScriptSource source = null;
+                if(frompath)
+                    source = Memoria.PythonEnv.CreateScriptSourceFromFile(c);
+                else
+                    source = Memoria.PythonEnv.CreateScriptSourceFromString(c);
+                var compiled = source.Compile();
+                var result = compiled.Execute(Memoria.PythonEsc);
+                Memoria.python_ing = false;
+                Memoria.PythonArgs = "";
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(e.ToString());
+                Console.WriteLine("Error terminal");
+                end(new string[] {"end"});
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+        }
+
+        public static void alua(string c, bool frompath)
+        {
+            try
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                if(frompath)
+                    Memoria.LuaEnv.DoFile(c);
+                else
+                    Memoria.LuaEnv.DoString(c, "rushell");
+                Memoria.lua_ing = false;
+                Memoria.LuaArgs = "";
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Memoria.lua_ing = false;
+                Memoria.LuaArgs = "";
+                Console.WriteLine(e.ToString());
+                Console.ForegroundColor = ConsoleColor.White;
             }
         }
 
@@ -237,6 +341,46 @@ namespace Rushell
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        public static void instance(string[] args)
+        {
+            if (args.Length > 1)
+                if (Memoria.varn.IndexOf(args[1]) > -1)
+                {
+                    object o = Memoria.varv[Memoria.varn.IndexOf(args[1])];
+                    List<string> s = new List<string>(args);
+                    s.RemoveAt(0);
+                    s.RemoveAt(0);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    if (o is IronPython.Runtime.PythonFunction)
+                        Memoria.PythonEnv.Operations.Invoke(o, s.ToArray());
+                    else if (o is NLua.LuaFunction)
+                        ((NLua.LuaFunction)o).Call(s.ToArray());
+                    else
+                        error(args[1] + " no es un tipo capaz de instanciarse");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+        }
+
+        public static void output(string[] args)
+        {
+            if (args.Length == 3)
+            {
+                if (args[1] == "set")
+                    Console.SetOut(File.AppendText(args[2]));
+            }
+            else if(args.Length == 2)
+            {
+                if (args[1] == "console")
+                {
+                    Console.Out.Flush();
+                    Console.Out.Close();
+                    Console.SetOut(Memoria.outwriter);
+                }
+            }
+            else
+                error("Demasiados argumentos para log");
+        }
+
         public static void if_else(string[] args)
         {
             if (args[2] == "then")
@@ -296,6 +440,77 @@ namespace Rushell
                     Program.Procesar(sub);
                 }
             }
+        }
+
+        public static void python(string[] args)
+        {
+            if (args.Length == 3)
+            {
+                if (args[1] == "run")
+                {
+                    apython(args[2], true);
+                }
+            }
+            else if (args.Length == 1)
+            {
+                Memoria.python_ing = true;
+            }
+            else
+            {
+                error("Demasiados argumentos para el comando 'lua'");
+            }
+        }
+
+        public static void lua(string[] args)
+        {
+            if (args.Length == 3)
+            {
+                if (args[1] == "run")
+                {
+                    alua(args[2], true);
+                }
+            }
+            else if (args.Length == 1)
+            {
+                Memoria.lua_ing = true;
+            }
+            else
+            {
+                error("Demasiados argumentos para el comando 'lua'");
+            }
+        }
+
+        public static int rand(string[] args)
+        {
+            switch (args.Length)
+            {
+                case 1:
+                    return new Random().Next(int.MinValue, int.MaxValue);
+                case 2:
+                    return new Random().Next(0, int.Parse(args[1]));
+                case 3:
+                    return new Random().Next(int.Parse(args[1]), int.Parse(args[2]));
+                default:
+                    error("demasiados argumentos para 'rand'");
+                    return 0;
+            }
+        }
+
+        public static void system(string[] args)
+        {
+            ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c " + string.Join(" ",args).Substring(args[0].Length+1));
+            procStartInfo.RedirectStandardOutput = true;
+            procStartInfo.RedirectStandardError = true;
+            procStartInfo.UseShellExecute = false;
+            procStartInfo.CreateNoWindow = false;
+            Process proc = new Process();
+            proc.StartInfo = procStartInfo;
+            proc.Start();
+            string result = proc.StandardOutput.ReadToEnd();
+            string errors = proc.StandardError.ReadToEnd();
+            writeli(new string[] { "writeli", result });
+            if (errors != "")
+                error(errors);
         }
 
         public static void inv(string[] args)

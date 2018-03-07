@@ -1,6 +1,4 @@
-﻿using org.mariuszgromada.math.mxparser;
-using System;
-using System.Collections;
+﻿using System;
 using System.Text.RegularExpressions;
 
 namespace Rushell
@@ -438,6 +436,43 @@ namespace Rushell
                     }
                 }
                 a_ = new Regex(Regex.Escape("!overfile(" + wrt + ")")).Replace(a_, Comandos.readfile(wrt), 1);
+            }
+
+            while (a_.Contains("!rand"))
+            {
+                string ael = "";
+                int o = a_.IndexOf("!rand");
+                bool ok = false;
+                for (int la = o + "!rand".Length; la < a_.Length; la++)
+                {
+                    if (ok)
+                    {
+                        if (a_[la] == ')')
+                        {
+                            ok = false;
+                        }
+                        else
+                        {
+                            ael += a_[la];
+                        }
+                    }
+                    if (la == o + "!rand".Length && a_[la] == '(')
+                    {
+                        ok = true;
+                    }
+                }
+                string[] args = null;
+                if (ael != "")
+                {
+                    string[] aels = ael.Split(',');
+                    args = new string[aels.Length + 1];
+                    args[0] = "rand";
+                    for (int j = 1; j < args.Length; j++)
+                        args[j] = aels[j - 1];
+                }
+                else
+                    args = new string[] { "rand" };
+                a_ = new Regex(Regex.Escape("!rand(" + ael + ")")).Replace(a_, Comandos.rand(args).ToString(), 1);
             }
 
             return a_;

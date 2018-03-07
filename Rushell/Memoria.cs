@@ -1,4 +1,7 @@
-﻿using org.mariuszgromada.math.mxparser;
+﻿using NLua;
+using IronPython.Hosting;
+using Microsoft.Scripting.Hosting;
+using org.mariuszgromada.math.mxparser;
 using System;
 using System.Collections;
 using System.IO;
@@ -11,6 +14,17 @@ namespace Rushell
     {
         public static ArrayList Pila = new ArrayList();
         public static int PilaActual = 0;
+
+        public static Lua LuaEnv = new Lua();
+        
+        public static ScriptEngine PythonEnv = Python.CreateEngine();
+        public static ScriptScope PythonEsc = PythonEnv.CreateScope();
+
+        public static string LuaArgs = "";
+        public static string PythonArgs = "";
+
+        public static bool lua_ing;
+        public static bool python_ing;
 
         public static ArrayList varn = new ArrayList();
         public static ArrayList varv = new ArrayList();
@@ -36,30 +50,52 @@ namespace Rushell
         public static ArrayList whiler = new ArrayList();
         public static ArrayList repeater = new ArrayList();
 
+        public static TextWriter outwriter = Console.Out;
+
         public static bool whilerstop = false;
         public static bool repeaterstop = false;
+        public static int repeatvalue = 0;
 
         public static bool indef = false;
-
         public static bool defining = false;
 
         public static bool init = false;
 
-        public static int repeatvalue = 0;
+        public static void Add_V(string type, string[] args)
+        {
+            bool tsinx = false;
+            if (type == "number")
+                for (int x = 2; x < args.Length; x++)
+                    args[x] = Comandos.exp(args[x]);
+            else if (type == "bool")
+                for (int x = 2; x < args.Length; x++)
+                    args[x] = new logicabooleana(args[x]).operar().ToString();
+            else if (type == "str")
+                tsinx = true;
+            else
+                Comandos.error("Variable desconocida: '" + type + "'");
+            Add_V(tsinx, args);
+        }
 
-        public static void Add_V(string[] args)
+        public static void Add_V(bool snx, string[] args)
         {
             varn.Add(args[1]);
             if(args.Length > 3)
             {
                 string[] n_ = new string[args.Length - 2];
                 for (int dx = 2; dx < args.Length; dx++)
-                    n_[dx - 2] = Sintaxis.Analizar(args[dx]);
+                    if(snx)
+                        n_[dx - 2] = Sintaxis.Analizar(args[dx]);
+                    else
+                        n_[dx - 2] = args[dx];
                 varv.Add(n_);
             }
             else if(args.Length == 3)
             {
-                varv.Add(Sintaxis.Analizar(args[2]));
+                if (snx)
+                    varv.Add(Sintaxis.Analizar(args[2]));
+                else
+                    varv.Add(args[2]);
             }
             else
             {
@@ -156,7 +192,7 @@ namespace Rushell
             {
                 indef = true;
                 for (int id = 0; id < param.Length; id++)
-                    Add_V(new string[] { "var", param[id], args[id + 1] });
+                    Add_V(true, new string[] { "var", param[id], args[id + 1] });
                 foreach (string[] line in (ArrayList)defv[defn.IndexOf(args[0])])
                     Program.Procesar(line);
                 for (int id = 0; id < param.Length; id++)
