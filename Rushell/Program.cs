@@ -7,7 +7,7 @@ namespace Rushell
 {
     class Program
     {
-        public static Version product = new Version(2,5,5,18);
+        public static Version product = new Version(2,6,5,18);
 
         public static void head()
         {
@@ -18,6 +18,7 @@ namespace Rushell
         public static void Main(string[] args)
         {
             Shareable s = new Shareable();
+            Memoria.PythonEnv.GetSearchPaths().Add(@"C:\Python27\Lib");
             Memoria.PythonEsc.SetVariable("memory", s);
             Memoria.LuaEnv["memory"] = s;
 
@@ -31,20 +32,20 @@ namespace Rushell
             }
             else
             {
-                if(File.Exists(args[0]))
+                Console.BackgroundColor = ConsoleColor.Black;
+                if (File.Exists(args[0]))
                 {
-                    head();
                     if(args.Length>0)
                         arguments(args);
                     StreamReader str = new StreamReader(args[0]);
                     string linea = "";
                     while ((linea = str.ReadLine()) != null)
                         ConsoleAnalizer(linea);
-                    ReadConsole();
+                    if(new FileInfo(args[0]).Extension==".rli")
+                        ReadConsole();
                 }
                 else
                 {
-                    head();
                     Procesar(args);
                     ReadConsole();
                 }
@@ -85,7 +86,7 @@ namespace Rushell
                 }
                 else if (comando[x] == '"')
                 {
-                    if (comando.Length > x - 1)
+                    if (x - 1 > 0 && comando.Length > x - 1)
                         if (comando[x - 1] != '\\')
                             if (comillas)
                                 comillas = false;

@@ -64,6 +64,7 @@ namespace Rushell
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(new Exception(ln).ToString());
             Console.ForegroundColor = ConsoleColor.White;
+            Environment.Exit(-1);
         }
 
         public static void snt(string[] args)
@@ -167,10 +168,11 @@ namespace Rushell
             catch (Exception e)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
+                Memoria.python_ing = false;
+                Memoria.PythonArgs = "";
                 Console.WriteLine(e.ToString());
-                Console.WriteLine("Error terminal");
-                end(new string[] {"end"});
                 Console.ForegroundColor = ConsoleColor.White;
+                Environment.Exit(-1);
             }
         }
 
@@ -194,6 +196,7 @@ namespace Rushell
                 Memoria.LuaArgs = "";
                 Console.WriteLine(e.ToString());
                 Console.ForegroundColor = ConsoleColor.White;
+                Environment.Exit(-1);
             }
         }
 
