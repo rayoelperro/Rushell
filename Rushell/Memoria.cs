@@ -142,13 +142,14 @@ namespace Rushell
 
         public static void Add_F(string[] args)
         {
-            string px = "";
-            for (int nl = 1; nl < args.Length; nl++)
+            //Example fun plus x,y x*y -> plus(x,y)=x*y
+            if(!(args.Length == 4))
             {
-                px += args[nl];
+                Comandos.error("El comando 'fun' solo toma 3 argumentos");
+                return;
             }
             funn.Add(args[1]);
-            funv.Add(new Function(px));
+            funv.Add(new Function(args[1],args[3],args[2].Split(',')));
         }
 
         public static double Cal_F(int place, string prm)
