@@ -7,19 +7,19 @@
         {
             get
             {
-                return Memoria.varv[Memoria.varn.IndexOf(name)];
+                return Memory.varv[Memory.varn.IndexOf(name)];
             }
             set
             {
-                if (Memoria.varn.IndexOf(name) > -1)
+                if (Memory.varn.IndexOf(name) > -1)
                 {
-                    Memoria.varn[Memoria.varn.IndexOf(name)] = name;
-                    Memoria.varv[Memoria.varn.IndexOf(name)] = name;
+                    Memory.varn[Memory.varn.IndexOf(name)] = name;
+                    Memory.varv[Memory.varn.IndexOf(name)] = name;
                 }
                 else
                 {
-                    Memoria.varn.Add(name);
-                    Memoria.varv.Add(value);
+                    Memory.varn.Add(name);
+                    Memory.varv.Add(value);
                 }
             }
         }

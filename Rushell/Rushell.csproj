@@ -106,9 +106,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Comandos.cs" />
-    <Compile Include="logicabooleana.cs" />
-    <Compile Include="Memoria.cs" />
+    <Compile Include="Commands.cs" />
+    <Compile Include="BooleanLogic.cs" />
+    <Compile Include="Memory.cs" />
+    <Compile Include="NewSyntax.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -117,7 +118,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Shareable.cs" />
-    <Compile Include="Sintaxis.cs" />
+    <Compile Include="Syntax.cs" />
+    <Compile Include="SyntaxCommands.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -5,17 +5,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace Rushell
 {
-    class Comandos
+    class Commands
     {
         public static void writeln(string[] args)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             for (int ar = 1; ar < args.Length; ar++)
-                Console.WriteLine(Sintaxis.Analizar(args[ar]));
+                Console.WriteLine(Syntax.Analizar(args[ar]));
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -23,7 +24,7 @@ namespace Rushell
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             for (int ar = 1; ar < args.Length; ar++)
-                Console.Write(Sintaxis.Analizar(args[ar]));
+                Console.Write(Syntax.Analizar(args[ar]));
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -49,8 +50,8 @@ namespace Rushell
             l.RemoveAt(0);
             l.RemoveAt(0);
             for (int x = 0; x < l.Count; x++)
-                l[x] = Sintaxis.Analizar(l[x]);
-            Console.Write(String.Format(Sintaxis.Analizar(args[1]),l.ToArray()));
+                l[x] = Syntax.Analizar(l[x]);
+            Console.Write(String.Format(Syntax.Analizar(args[1]),l.ToArray()));
         }
 
         public static void writefln(string[] args)
@@ -62,7 +63,7 @@ namespace Rushell
         public static void error(string ln)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(new Exception(ln).ToString());
+            Console.WriteLine("Runtime error: " + ln);
             Console.ForegroundColor = ConsoleColor.White;
             Environment.Exit(-1);
         }
@@ -71,14 +72,14 @@ namespace Rushell
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             for (int ar = 1; ar < args.Length; ar++)
-                Sintaxis.Analizar(args[ar]);
+                Syntax.Analizar(args[ar]);
             Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static void snt(string ln)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Sintaxis.Analizar(ln);
+            Syntax.Analizar(ln);
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -86,7 +87,7 @@ namespace Rushell
         {
             string n = new Expression(wrt).calculate().ToString();
             if (n == "NeuN")
-                error("Ecuación matemática erronea: " + wrt);
+                error("Wrong mathematic equation: " + wrt);
             return n;
         }
 
@@ -103,14 +104,14 @@ namespace Rushell
                 else if (args[1] == "python")
                     endpython();
                 else
-                    error("La declaración que intentas terminar no existe: " + args[1]);
+                    error("The declaration you tried finish doesn't exists: " + args[1]);
             }
             else if (args.Length == 3)
             {
                 if (args[1] == "prompt")
                     write(new string[] { args[2] });
                 else
-                    error("La declaración que intentas terminar no existe: " + args[1]);
+                    error("The declaration you tried finish doesn't exists: " + args[1]);
                 Console.ReadKey();
                 Environment.Exit(-1);
             }
@@ -121,31 +122,31 @@ namespace Rushell
             }
             else
             {
-                error("Demasiados argumentos para la funcion 'end'");
+                error("Too much arguments for the 'end' function");
             }
         }
 
         public static void endpython()
         {
-            if (Memoria.python_ing)
+            if (Memory.python_ing)
             {
-                apython(Memoria.PythonArgs,false);
+                apython(Memory.PythonArgs,false);
             }
             else
             {
-                error("Se intento finalizar un proceso de python que no existe");
+                error("It tried to finish a python process that doesn't exists");
             }
         }
 
         public static void endlua()
         {
-            if (Memoria.lua_ing)
+            if (Memory.lua_ing)
             {
-                alua(Memoria.LuaArgs,false);
+                alua(Memory.LuaArgs,false);
             }
             else
             {
-                error("Se intento finalizar un proceso de lua que no existe");
+                error("It tried to finish a lua process that doesn't exists");
             }
         }
 
@@ -156,20 +157,20 @@ namespace Rushell
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 ScriptSource source = null;
                 if(frompath)
-                    source = Memoria.PythonEnv.CreateScriptSourceFromFile(c);
+                    source = Memory.PythonEnv.CreateScriptSourceFromFile(c);
                 else
-                    source = Memoria.PythonEnv.CreateScriptSourceFromString(c);
+                    source = Memory.PythonEnv.CreateScriptSourceFromString(c);
                 var compiled = source.Compile();
-                var result = compiled.Execute(Memoria.PythonEsc);
-                Memoria.python_ing = false;
-                Memoria.PythonArgs = "";
+                var result = compiled.Execute(Memory.PythonEsc);
+                Memory.python_ing = false;
+                Memory.PythonArgs = "";
                 Console.ForegroundColor = ConsoleColor.White;
             }
             catch (Exception e)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Memoria.python_ing = false;
-                Memoria.PythonArgs = "";
+                Memory.python_ing = false;
+                Memory.PythonArgs = "";
                 Console.WriteLine(e.ToString());
                 Console.ForegroundColor = ConsoleColor.White;
                 Environment.Exit(-1);
@@ -182,18 +183,18 @@ namespace Rushell
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 if(frompath)
-                    Memoria.LuaEnv.DoFile(c);
+                    Memory.LuaEnv.DoFile(c);
                 else
-                    Memoria.LuaEnv.DoString(c, "rushell");
-                Memoria.lua_ing = false;
-                Memoria.LuaArgs = "";
+                    Memory.LuaEnv.DoString(c, "rushell");
+                Memory.lua_ing = false;
+                Memory.LuaArgs = "";
                 Console.ForegroundColor = ConsoleColor.White;
             }
             catch (Exception e)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Memoria.lua_ing = false;
-                Memoria.LuaArgs = "";
+                Memory.lua_ing = false;
+                Memory.LuaArgs = "";
                 Console.WriteLine(e.ToString());
                 Console.ForegroundColor = ConsoleColor.White;
                 Environment.Exit(-1);
@@ -210,19 +211,19 @@ namespace Rushell
 
         public static void repeat(string[] args)
         {
-            int n = int.Parse(Sintaxis.Analizar(args[1]));
+            int n = int.Parse(Syntax.Analizar(args[1]));
             if (args[2] == "then")
             {
                 if (args.Length > 3)
                 {
-                    error("Demasiados terminos para el comando repeat");
+                    error("Too much arguments for the 'repeat' command");
                 }
                 else
                 {
                     if (n == 0)
-                        Memoria.repeaterstop = true;
-                    Memoria.repeatvalue = 0;
-                    Memoria.repeater.Add(new int[] { n-1, Memoria.PilaActual });
+                        Memory.repeaterstop = true;
+                    Memory.repeatvalue = 0;
+                    Memory.repeater.Add(new int[] { n-1, Memory.PilaActual });
                 }
             }
             else
@@ -232,7 +233,7 @@ namespace Rushell
                 l.RemoveAt(0);
                 for (int re = 0; re < n; re++)
                 {
-                    Memoria.repeatvalue = re;
+                    Memory.repeatvalue = re;
                     Program.Procesar((string[])l.ToArray(typeof(string)));
                 }
             }
@@ -240,36 +241,36 @@ namespace Rushell
 
         public static void repeater()
         {
-            Memoria.repeaterstop = false;
-            if (Memoria.repeater.Count > 0)
+            Memory.repeaterstop = false;
+            if (Memory.repeater.Count > 0)
             {
-                int times = ((int[])Memoria.repeater[Memoria.repeater.Count - 1])[0];
-                int value = ((int[])Memoria.repeater[Memoria.repeater.Count - 1])[1];
+                int times = ((int[])Memory.repeater[Memory.repeater.Count - 1])[0];
+                int value = ((int[])Memory.repeater[Memory.repeater.Count - 1])[1];
                 ArrayList l = new ArrayList();
-                int pl = Memoria.PilaActual - 1;
+                int pl = Memory.PilaActual - 1;
                 int st = value + 1;
-                if (Memoria.indef)
+                if (Memory.indef)
                 {
                     pl += 1;
                     st += 1;
                 }
                 for (int x = st; x <= pl; x++)
                 {
-                    l.Add(Memoria.Pila[x]);
+                    l.Add(Memory.Pila[x]);
                 }
                 for (int x = 0; x < times; x++)
                 {
-                    Memoria.repeatvalue = x + 1;
+                    Memory.repeatvalue = x + 1;
                     for (int y = 0; y < l.Count; y++)
                     {
                         Program.Procesar((string[])l[y]);
                     }
                 }
-                Memoria.repeater.RemoveAt(Memoria.repeater.Count - 1);
+                Memory.repeater.RemoveAt(Memory.repeater.Count - 1);
             }
             else
             {
-                error("No hay ningún repeat abierto");
+                error("No repeat opened");
             }
         }
 
@@ -279,13 +280,13 @@ namespace Rushell
             {
                 if (args.Length > 3)
                 {
-                    error("Demasiados terminos para el comando while");
+                    error("Too much arguments for the 'while' command");
                 }
                 else
                 {
-                    if (!(new logicabooleana(args[1]).operar()))
-                        Memoria.whilerstop = true;
-                    Memoria.whiler.Add(new string[] { args[1], Memoria.PilaActual.ToString() });
+                    if (!(new BooleanLogic(args[1]).operar()))
+                        Memory.whilerstop = true;
+                    Memory.whiler.Add(new string[] { args[1], Memory.PilaActual.ToString() });
                 }
             }
             else
@@ -293,38 +294,38 @@ namespace Rushell
                 ArrayList l = new ArrayList(args);
                 l.RemoveAt(0);
                 l.RemoveAt(0);
-                while (new logicabooleana(args[1]).operar())
+                while (new BooleanLogic(args[1]).operar())
                     Program.Procesar((string[])l.ToArray(typeof(string)));
             }
         }
 
         public static void whiler()
         {
-            Memoria.whilerstop = false;
-            if (Memoria.whiler.Count > 0)
+            Memory.whilerstop = false;
+            if (Memory.whiler.Count > 0)
             {
-                string condicion = ((string[])Memoria.whiler[Memoria.whiler.Count - 1])[0];
-                int value = int.Parse(((string[])Memoria.whiler[Memoria.whiler.Count - 1])[1]);
+                string condicion = ((string[])Memory.whiler[Memory.whiler.Count - 1])[0];
+                int value = int.Parse(((string[])Memory.whiler[Memory.whiler.Count - 1])[1]);
                 ArrayList l = new ArrayList();
-                int pl = Memoria.PilaActual - 1;
-                if (Memoria.indef)
+                int pl = Memory.PilaActual - 1;
+                if (Memory.indef)
                     pl += 1;
                 for (int x = value + 1; x <= pl; x++)
                 {
-                    l.Add(Memoria.Pila[x]);
+                    l.Add(Memory.Pila[x]);
                 }
-                while(new logicabooleana(condicion).operar())
+                while(new BooleanLogic(condicion).operar())
                 {
                     for (int y = 0; y < l.Count; y++)
                     {
                         Program.Clasificar((string[])l[y]);
                     }
                 }
-                Memoria.whiler.RemoveAt(Memoria.whiler.Count - 1);
+                Memory.whiler.RemoveAt(Memory.whiler.Count - 1);
             }
             else
             {
-                error("No hay ningún while abierto");
+                error("No while opened");
             }
         }
 
@@ -340,28 +341,34 @@ namespace Rushell
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             for (int ar = 1; ar < args.Length; ar++)
-                Console.WriteLine(new logicabooleana(args[ar]).operar().ToString());
+                Console.WriteLine(new BooleanLogic(args[ar]).operar().ToString());
             Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static void instance(string[] args)
         {
             if (args.Length > 1)
-                if (Memoria.varn.IndexOf(args[1]) > -1)
+                if (Memory.varn.IndexOf(args[1]) > -1)
                 {
-                    object o = Memoria.varv[Memoria.varn.IndexOf(args[1])];
+                    object o = Memory.varv[Memory.varn.IndexOf(args[1])];
                     List<string> s = new List<string>(args);
                     s.RemoveAt(0);
                     s.RemoveAt(0);
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     if (o is IronPython.Runtime.PythonFunction)
-                        Memoria.PythonEnv.Operations.Invoke(o, s.ToArray());
+                        Memory.PythonEnv.Operations.Invoke(o, s.ToArray());
                     else if (o is NLua.LuaFunction)
                         ((NLua.LuaFunction)o).Call(s.ToArray());
                     else
-                        error(args[1] + " no es un tipo capaz de instanciarse");
+                        error(args[1] + " isn't a type able to instance itself");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
+        }
+
+        public static void return_(string[] args)
+        {
+            if (args.Length != 2) error("Wrong number of returns");
+            Memory.LastRet = args[1];
         }
 
         public static void output(string[] args)
@@ -377,11 +384,11 @@ namespace Rushell
                 {
                     Console.Out.Flush();
                     Console.Out.Close();
-                    Console.SetOut(Memoria.outwriter);
+                    Console.SetOut(Memory.outwriter);
                 }
             }
             else
-                error("Demasiados argumentos para log");
+                error("Too much arguments for the 'log' command");
         }
 
         public static void if_else(string[] args)
@@ -390,7 +397,7 @@ namespace Rushell
             {
                 bool noelse = true;
                 bool block = false;
-                if (new logicabooleana(args[1]).operar())
+                if (new BooleanLogic(args[1]).operar())
                 {
                     if (args.Length > 3)
                     {
@@ -407,14 +414,14 @@ namespace Rushell
                     block = true;
                     noelse = false;
                 }
-                Memoria.condition.Add(new bool[] { noelse, block });
+                Memory.condition.Add(new bool[] { noelse, block });
             }
             else
             {
                 int els = Array.IndexOf(args, "else");
                 if (els != -1)
                 {
-                    if (new logicabooleana(args[1]).operar())
+                    if (new BooleanLogic(args[1]).operar())
                     {
                         string[] sub = new string[els - 2];
                         for (int pl = 0; pl < sub.Length; pl++)
@@ -433,7 +440,7 @@ namespace Rushell
                         Program.Procesar(sub);
                     }
                 }
-                else if (new logicabooleana(args[1]).operar())
+                else if (new BooleanLogic(args[1]).operar())
                 {
                     string[] sub = new string[args.Length-2];
                     for (int pl = 0; pl < sub.Length; pl++)
@@ -456,11 +463,11 @@ namespace Rushell
             }
             else if (args.Length == 1)
             {
-                Memoria.python_ing = true;
+                Memory.python_ing = true;
             }
             else
             {
-                error("Demasiados argumentos para el comando 'lua'");
+                error("Too much arguments for the command 'python'");
             }
         }
 
@@ -475,11 +482,11 @@ namespace Rushell
             }
             else if (args.Length == 1)
             {
-                Memoria.lua_ing = true;
+                Memory.lua_ing = true;
             }
             else
             {
-                error("Demasiados argumentos para el comando 'lua'");
+                error("Too much arguments for the command 'lua'");
             }
         }
 
@@ -494,7 +501,7 @@ namespace Rushell
                 case 3:
                     return new Random().Next(int.Parse(args[1]), int.Parse(args[2]));
                 default:
-                    error("demasiados argumentos para 'rand'");
+                    error("Too much arguments for the command 'rand'");
                     return 0;
             }
         }

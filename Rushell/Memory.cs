@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace Rushell
 {
-    class Memoria
+    class Memory
     {
         public static ArrayList Pila = new ArrayList();
         public static int PilaActual = 0;
@@ -61,19 +61,25 @@ namespace Rushell
 
         public static bool init = false;
 
+        public static bool NewSyntax = false;
+
+        public static string LastRet = "";
+
         public static void Add_V(string type, string[] args)
         {
             bool tsinx = false;
             if (type == "number")
                 for (int x = 2; x < args.Length; x++)
-                    args[x] = Comandos.exp(args[x]);
+                    args[x] = Commands.exp(args[x]);
             else if (type == "bool")
                 for (int x = 2; x < args.Length; x++)
-                    args[x] = new logicabooleana(args[x]).operar().ToString();
+                    args[x] = new BooleanLogic(args[x]).operar().ToString();
             else if (type == "str")
                 tsinx = true;
+            else if (type == "lit")
+                tsinx = false;
             else
-                Comandos.error("Variable desconocida: '" + type + "'");
+                Commands.error("Unknown variable: '" + type + "'");
             Add_V(tsinx, args);
         }
 
@@ -85,7 +91,7 @@ namespace Rushell
                 string[] n_ = new string[args.Length - 2];
                 for (int dx = 2; dx < args.Length; dx++)
                     if(snx)
-                        n_[dx - 2] = Sintaxis.Analizar(args[dx]);
+                        n_[dx - 2] = Syntax.Analizar(args[dx]);
                     else
                         n_[dx - 2] = args[dx];
                 varv.Add(n_);
@@ -93,7 +99,7 @@ namespace Rushell
             else if(args.Length == 3)
             {
                 if (snx)
-                    varv.Add(Sintaxis.Analizar(args[2]));
+                    varv.Add(Syntax.Analizar(args[2]));
                 else
                     varv.Add(args[2]);
             }
@@ -123,13 +129,13 @@ namespace Rushell
                     string[] arg = new string[args.Length - 2];
                     for (int ags = 0; ags < arg.Length; ags++)
                     {
-                        arg[ags] = Sintaxis.Analizar(args[ags + 2]);
+                        arg[ags] = Syntax.Analizar(args[ags + 2]);
                     }
                     varv[vno] = arg;
                 }
                 else if (args.Length == 2)
                 {
-                    varv[vno] = Sintaxis.Analizar(args[1]);
+                    varv[vno] = Syntax.Analizar(args[1]);
                 }
             }
         }
@@ -145,7 +151,7 @@ namespace Rushell
             //Example fun plus x,y x*y -> plus(x,y)=x*y
             if(!(args.Length == 4))
             {
-                Comandos.error("El comando 'fun' solo toma 3 argumentos");
+                Commands.error("The 'fun' command only take 3 arguments");
                 return;
             }
             funn.Add(args[1]);
@@ -154,7 +160,7 @@ namespace Rushell
 
         public static double Cal_F(int place, string prm)
         {
-            double[] partes = Sintaxis.Analizar(prm).Split(',').Select(double.Parse).ToArray();
+            double[] partes = Syntax.Analizar(prm).Split(',').Select(double.Parse).ToArray();
             Function calc = (Function)funv[place];
             return calc.calculate(partes);
         }
@@ -188,12 +194,12 @@ namespace Rushell
         {
             string[] param = ((string[])defp[defn.IndexOf(args[0])]);
             if (param.Length != args.Length - 1)
-                Comandos.error("El número de parámetros no coincidía");
+                Commands.error("The argument number doesn't agree");
             else
             {
                 indef = true;
                 for (int id = 0; id < param.Length; id++)
-                    Add_V(true, new string[] { "var", param[id], args[id + 1] });
+                    Add_V(true, new string[] { "var", param[id], Syntax.Analizar(args[id + 1]) });
                 foreach (string[] line in (ArrayList)defv[defn.IndexOf(args[0])])
                     Program.Procesar(line);
                 for (int id = 0; id < param.Length; id++)
@@ -217,7 +223,7 @@ namespace Rushell
                 }
                 else
                 {
-                    Comandos.error("El archivo: " + paths[imp] + " no existe");
+                    Commands.error("The file: " + paths[imp] + " doesn't exists");
                 }
             }
         }
@@ -237,7 +243,7 @@ namespace Rushell
                 if (!File.Exists(args[1]))
                     if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + args[1]))
                     {
-                        Comandos.error("Directorio no encontrado: " + args[1]);
+                        Commands.error("Not found directory: " + args[1]);
                         return;
                     }
                     else
@@ -247,7 +253,7 @@ namespace Rushell
                 {
                     Type cla = ldr.GetType(args[x]);
                     if (cla == null)
-                        Comandos.error("Ruta invalida");
+                        Commands.error("Invalid path");
                     else
                     {
                         dlln.Add(args[x]);
@@ -276,7 +282,7 @@ namespace Rushell
                     }
                     for (int x = 4; x < args.Length; x++)
                     {
-                        parame[x - 4] = args[x];
+                        parame[x - 4] = Syntax.Analizar(args[x]);
                     }
                     Type upper = (Type)dllv[dlln.IndexOf(args[1])];
                     ConstructorInfo cinf = upper.GetConstructor(alls);
@@ -287,12 +293,12 @@ namespace Rushell
                 }
                 else
                 {
-                    Comandos.error("Insuficientes argumentos");
+                    Commands.error("Not enough arguments");
                 }
             }
             else
             {
-                Comandos.error("Uso incorrecto de 'from'");
+                Commands.error("Wrong use of 'from'");
             }
         }
 
@@ -308,12 +314,12 @@ namespace Rushell
             {
                 object[] param = new object[args.Length - 2];
                 for (int x = 2; x < args.Length; x++)
-                    param[x - 2] = args[x];
+                    param[x - 2] = Syntax.Analizar(args[x]);
                 return toinv.Invoke(null, param);
             }
             else
             {
-                Comandos.error("Insuficientes argumentos");
+                Commands.error("Not enough arguments");
             }
             return null;
         }
@@ -335,14 +341,14 @@ namespace Rushell
                 {
                     if (paramson)
                     {
-                        paramsons.Add(Sintaxis.Analizar(args[x]));
+                        paramsons.Add(Syntax.Analizar(args[x]));
                     }
                     else
                     {
                         if (args[x] == "$")
                             paramson = true;
                         else
-                            param.Add(Sintaxis.Analizar(args[x]));
+                            param.Add(Syntax.Analizar(args[x]));
                     }
                 }
                 if (paramson)
@@ -351,7 +357,7 @@ namespace Rushell
             }
             else
             {
-                Comandos.error("Insuficientes argumentos");
+                Commands.error("Not enough arguments");
             }
             return null;
         }

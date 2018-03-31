@@ -2,11 +2,11 @@
 
 namespace Rushell
 {
-    class logicabooleana
+    class BooleanLogic
     {
         public string Expresion;
 
-        public logicabooleana(string expresion)
+        public BooleanLogic(string expresion)
         {
             if (expresion.StartsWith("(") && expresion.EndsWith(")"))
                 Expresion = expresion;
@@ -16,7 +16,7 @@ namespace Rushell
 
         public bool operar()
         {
-            string sfinal = Sintaxis.Analizar(Expresion);
+            string sfinal = Syntax.Analizar(Expresion);
             return evaluar(organizar(sfinal));
         }
 
@@ -157,7 +157,7 @@ namespace Rushell
             }
             else if (expresion[expresion.Length - 1] == '?')
             {
-                if (Memoria.varn.Contains(expresion.Substring(0, expresion.Length - 1)))
+                if (Memory.varn.Contains(expresion.Substring(0, expresion.Length - 1)))
                     res = "true";
                 else
                     res = "false";

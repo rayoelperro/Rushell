@@ -18,9 +18,9 @@ namespace Rushell
         public static void Main(string[] args)
         {
             Shareable s = new Shareable();
-            Memoria.PythonEnv.GetSearchPaths().Add(@"C:\Python27\Lib");
-            Memoria.PythonEsc.SetVariable("memory", s);
-            Memoria.LuaEnv["memory"] = s;
+            Memory.PythonEnv.GetSearchPaths().Add(@"C:\Python27\Lib");
+            Memory.PythonEsc.SetVariable("memory", s);
+            Memory.LuaEnv["memory"] = s;
 
             Console.Title = "Rushell";
             Console.BackgroundColor = ConsoleColor.Red;
@@ -62,7 +62,7 @@ namespace Rushell
 
         public static void ConsoleAnalizer(string comando)
         {
-            if(Memoria.python_ing || Memoria.lua_ing)
+            if(Memory.python_ing || Memory.lua_ing)
             {
                 if (comando.Length > 0)
                     if (comando == "end python" || comando == "end lua")
@@ -124,80 +124,80 @@ namespace Rushell
 
         public static void Procesar(string[] args)
         {
-            Memoria.Pila.Add(args);
+            Memory.Pila.Add(args);
             Clasificar(args);
-            Memoria.PilaActual++;
+            Memory.PilaActual++;
         }
 
         public static void Clasificar(string[] args)
         {
             if (args.Length > 0)
             {
-                if (Memoria.condition.Count > 0)
+                if (Memory.condition.Count > 0)
                 {
                     if (args[0] == "end" && args[1] == "if" && args.Length == 2)
                     {
-                        Memoria.condition.RemoveAt(Memoria.condition.Count - 1);
+                        Memory.condition.RemoveAt(Memory.condition.Count - 1);
                     }
                     else if (args[0] == "else" && args.Length == 1)
                     {
-                        ((bool[])Memoria.condition[Memoria.condition.Count - 1])[1] = ((bool[])Memoria.condition[Memoria.condition.Count - 1])[0];
+                        ((bool[])Memory.condition[Memory.condition.Count - 1])[1] = ((bool[])Memory.condition[Memory.condition.Count - 1])[0];
                     }
                     else if (args[0] == "else" && args[1] == "if" && args.Length == 3)
                     {
-                        if (!((bool[])Memoria.condition[Memoria.condition.Count - 1])[0] && new logicabooleana(args[2]).operar())
+                        if (!((bool[])Memory.condition[Memory.condition.Count - 1])[0] && new BooleanLogic(args[2]).operar())
                         {
-                            ((bool[])Memoria.condition[Memoria.condition.Count - 1])[1] = false;
-                            ((bool[])Memoria.condition[Memoria.condition.Count - 1])[0] = true;
+                            ((bool[])Memory.condition[Memory.condition.Count - 1])[1] = false;
+                            ((bool[])Memory.condition[Memory.condition.Count - 1])[0] = true;
                         }
                         else
                         {
-                            ((bool[])Memoria.condition[Memoria.condition.Count - 1])[1] = true;
+                            ((bool[])Memory.condition[Memory.condition.Count - 1])[1] = true;
                         }
                     }
-                    else if (!((bool[])Memoria.condition[Memoria.condition.Count - 1])[1])
+                    else if (!((bool[])Memory.condition[Memory.condition.Count - 1])[1])
                         swc(args);
                 }
                 else
                 {
-                    if (Memoria.defining)
+                    if (Memory.defining)
                     {
                         if (args[0] == "end" && args[1] == "def" && args.Length == 2)
                         {
-                            Memoria.defining = false;
+                            Memory.defining = false;
                         }
                         else
                         {
-                            ((ArrayList)Memoria.defv[Memoria.defv.Count - 1]).Add(args);
+                            ((ArrayList)Memory.defv[Memory.defv.Count - 1]).Add(args);
                         }
                     }
-                    else if (Memoria.python_ing)
+                    else if (Memory.python_ing)
                         if (args.Length == 2 && args[0] == "end" && args[1] == "python")
-                            Comandos.end(args);
+                            Commands.end(args);
                         else
-                            Memoria.PythonArgs += String.Join(" ", args) + "\n";
-                    else if (Memoria.lua_ing)
+                            Memory.PythonArgs += String.Join(" ", args) + "\n";
+                    else if (Memory.lua_ing)
                         if (args.Length == 2 && args[0] == "end" && args[1] == "lua")
-                            Comandos.end(args);
+                            Commands.end(args);
                         else
-                            Memoria.LuaArgs += String.Join(" ", args) + "\n";
+                            Memory.LuaArgs += String.Join(" ", args) + "\n";
                     else
                         {
-                            if (!Memoria.repeaterstop && !Memoria.whilerstop)
+                            if (!Memory.repeaterstop && !Memory.whilerstop)
                                 swc(args);
-                            else if (Memoria.whilerstop)
+                            else if (Memory.whilerstop)
                             {
                                 if (args[0] == "end" && args[1] == "while" && args.Length == 2)
                                     swc(args);
                             }
-                            else if (Memoria.repeaterstop)
+                            else if (Memory.repeaterstop)
                             {
                                 if (args[0] == "end" && args[1] == "repeat" && args.Length == 2)
                                     swc(args);
                             }
                             else
                             {
-                                Comandos.error("Error de analisis");
+                                Commands.error("Error de analisis");
                             }
                         }
                 }
@@ -208,65 +208,71 @@ namespace Rushell
         {
             switch (args[0])
             {
+                case "news":
+                    Memory.NewSyntax = true;
+                    break;
                 case "write":
-                    Comandos.write(args);
+                    Commands.write(args);
                     break;
                 case "writef":
-                    Comandos.writef(args);
+                    Commands.writef(args);
                     break;
                 case "writeli":
-                    Comandos.writeli(args);
+                    Commands.writeli(args);
                     break;
                 case "writeliln":
-                    Comandos.writeliln(args);
+                    Commands.writeliln(args);
                     break;
                 case "writeln":
-                    Comandos.writeln(args);
+                    Commands.writeln(args);
                     break;
                 case "writefln":
-                    Comandos.writefln(args);
+                    Commands.writefln(args);
                     break;
                 case "exit":
                     Environment.Exit(-1);
                     break;
                 case "beep":
-                    Comandos.beep(args);
+                    Commands.beep(args);
                     break;
                 case "clear":
                     Console.Clear();
                     break;
                 case "repeat":
-                    Comandos.repeat(args);
+                    Commands.repeat(args);
                     break;
                 case "math":
-                    Comandos.math(args);
+                    Commands.math(args);
                     break;
                 case "logic":
-                    Comandos.logic(args);
+                    Commands.logic(args);
                     break;
                 case "if":
-                    Comandos.if_else(args);
+                    Commands.if_else(args);
                     break;
                 case "var":
-                    Memoria.Add_V(true,args);
+                    Memory.Add_V(true,args);
                     break;
                 case "number":
-                    Memoria.Add_V("number",args);
+                    Memory.Add_V("number",args);
                     break;
                 case "bool":
-                    Memoria.Add_V("bool", args);
+                    Memory.Add_V("bool", args);
                     break;
                 case "str":
-                    Memoria.Add_V("str", args);
+                    Memory.Add_V("str", args);
+                    break;
+                case "lit":
+                    Memory.Add_V("lit", args);
                     break;
                 case "fun":
-                    Memoria.Add_F(args);
+                    Memory.Add_F(args);
                     break;
                 case "overfile":
-                    Comandos.writefile(args);
+                    Commands.writefile(args);
                     break;
                 case "while":
-                    Comandos.while_(args);
+                    Commands.while_(args);
                     break;
                 case "wait":
                     Thread.Sleep(int.Parse(args[1]));
@@ -275,10 +281,10 @@ namespace Rushell
                     Console.Title = args[1];
                     break;
                 case "snt":
-                    Comandos.snt(args);
+                    Commands.snt(args);
                     break;
                 case "sa":
-                    Comandos.saltos(args);
+                    Commands.saltos(args);
                     break;
                 case "\\n":
                     Console.WriteLine("");
@@ -287,45 +293,48 @@ namespace Rushell
                     Console.Write(" ");
                     break;
                 case "inv":
-                    Comandos.inv(args);
+                    Commands.inv(args);
                     break;
                 case "def":
-                    Memoria.Add_D(args);
+                    Memory.Add_D(args);
                     break;
                 case "import":
-                    Memoria.Import(args);
+                    Memory.Import(args);
                     break;
                 case "from":
-                    Memoria.from_i(args);
+                    Memory.from_i(args);
                     break;
                 case "async":
-                    Comandos.async(args);
+                    Commands.async(args);
                     break;
                 case "system":
-                    Comandos.system(args);
+                    Commands.system(args);
                     break;
                 case "#":
                     break;
                 case "run":
-                    Comandos.loadscript(args[1]);
+                    Commands.loadscript(args[1]);
                     break;
                 case "end":
-                    Comandos.end(args);
+                    Commands.end(args);
                     break;
                 case "lua":
-                    Comandos.lua(args);
+                    Commands.lua(args);
                     break;
                 case "python":
-                    Comandos.python(args);
+                    Commands.python(args);
                     break;
                 case "instance":
-                    Comandos.instance(args);
+                    Commands.instance(args);
                     break;
                 case "output":
-                    Comandos.output(args);
+                    Commands.output(args);
+                    break;
+                case "return":
+                    Commands.return_(args);
                     break;
                 case "init":
-                    if (Memoria.init)
+                    if (Memory.init)
                     {
                         ArrayList r = new ArrayList(args);
                         r.RemoveAt(0);
@@ -333,18 +342,18 @@ namespace Rushell
                     }
                     break;
                 default:
-                    if (Memoria.varn.Contains(args[0]))
-                        Memoria.Set_V(args);
-                    else if (Memoria.defn.Contains(args[0]))
-                        Memoria.Call_D(args);
-                    else if (Memoria.dlln.Contains(args[0]))
-                        Memoria.dll_m(args);
-                    else if (Memoria.insn.Contains(args[0]))
-                        Memoria.ins_m(args);
-                    else if (Memoria.iton.Contains(args[0]))
-                        Memoria.ito_m(args);
+                    if (Memory.varn.Contains(args[0]))
+                        Memory.Set_V(args);
+                    else if (Memory.defn.Contains(args[0]))
+                        Memory.Call_D(args);
+                    else if (Memory.dlln.Contains(args[0]))
+                        Memory.dll_m(args);
+                    else if (Memory.insn.Contains(args[0]))
+                        Memory.ins_m(args);
+                    else if (Memory.iton.Contains(args[0]))
+                        Memory.ito_m(args);
                     else
-                        Comandos.error("Comando erroneo: " + args[0]);
+                        Commands.error("Wrong command: " + args[0]);
                     break;
             }
         }
@@ -352,7 +361,7 @@ namespace Rushell
         public static void arguments(string[] fullargs)
         {
             for (int ar = 1; ar < fullargs.Length; ar++)
-                Memoria.Add_V(true, new string[] { "var", "arg" + (ar-1), fullargs[ar] });
+                Memory.Add_V(true, new string[] { "var", "arg" + (ar-1), fullargs[ar] });
         }
     }
 }
